@@ -28,3 +28,9 @@
 - feedparser
 - ***[TODO]*** sqlite3 or mysql
 - ***[TO BE CONTINUED]***
+
+## Reference
+- 参考https://www.cnblogs.com/old-jipa-deng/p/12980427.html 中的优秀示例
+  - https://www.cnblogs.com/SivilTaram/p/4900457.html
+  - https://github.com/MinJieDev/Roadmap-Frontend
+- commit规范：https://github.com/youngjuning/conventional-commits-demo
