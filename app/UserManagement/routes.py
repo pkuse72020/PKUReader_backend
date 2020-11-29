@@ -1,8 +1,9 @@
 from app.UserManagement import UserManagement
 from flask import request, session, jsonify
 from app.tables import UserInfo
-from app import db
-from werkzeug.security import generate_password_hash,check_password_hash
+from app import db, auth
+from app.token_auth import generate_auth_token
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
 
 @UserManagement.route('/')
@@ -32,11 +33,9 @@ def signip():
 def login():
     if request.method == "GET":
         userid = request.args.get("userid")
-        username = request.args.get("username")
         password = request.args.get("password")
     else:
         userid = request.form.get("userid")
-        username = request.form.get("username")
         password = request.form.get("password")
     try:
         result = UserInfo.query.filter_by(UserId=userid).all()
@@ -48,11 +47,15 @@ def login():
         return jsonify({"state": "failed", "description": "There are multiple lines in database with the same Userid."})
     else:
         result = result[0]
-        if username != result.Username:
-            return jsonify({"state":"failed","description":"There is a conflict between your machine and the server. Your local cache file may be out-of-date."})
-        password_hash = result.Password_hash
-        if check_password_hash(password_hash, password):
-            return jsonify({"state": "success"})
+        if result.checkPassword(password):
+            return jsonify({"state": "success","token":generate_auth_token(result.UserId,result.Password_hash)})
         else:
-            return jsonify({"state":"failed","description":"Wrong password."})
+            return jsonify({"state": "failed", "description": "Wrong password."})
+            
+
+@UserManagement.route('/token_test', methods=["GET", "POST"])
+@auth.login_required
+def token_test():
+    return "token success"
+
 

@@ -7,10 +7,12 @@ class UserInfo(db.Model):
     UserId = db.Column(db.Integer, nullable=False,
                        unique=True, primary_key=True)
     Username = db.Column(db.String(20), nullable=False)
-    Password = db.Column(db.String(20), nullable=True)
+    # Password = db.Column(db.String(20), nullable=True)
     Password_hash=db.Column(db.String(100),nullable=False)
 
     def __init__(self, username, password):
         self.UserId=len(UserInfo.query.all())+1
         self.Username = username
-        self.Password_hash=generate_password_hash(password)
+        self.Password_hash = generate_password_hash(password)
+    def checkPassword(self, password):
+        return check_password_hash(self.Password_hash, password)
