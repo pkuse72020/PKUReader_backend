@@ -1,2 +1,6 @@
 *.pyc
 *.db
+private_key_file.pem
+.vscode
+*.db
+
