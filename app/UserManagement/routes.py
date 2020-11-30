@@ -1,11 +1,14 @@
 from app.UserManagement import UserManagement
+
 from flask import request, session, jsonify
+
 from app.tables import UserInfo
 from app import db, auth
 from app.token_auth import generate_auth_token
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from app import pubkey, privkey
 import rsa
+
 
 
 @UserManagement.route('/')
@@ -70,5 +73,3 @@ def login():
 @auth.login_required
 def token_test():
     return "token success"
-
-
