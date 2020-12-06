@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 import json
 
 class NewsElasticEngine():
-    def __init__(self, hosts=["10.2.211.255:9200"], index_name="news", doc_type="news"):
+    def __init__(self, hosts=["49.234.217.176:9200"], index_name="news", doc_type="news"):
         self.es = Elasticsearch(hosts)
         self.hosts = hosts
         self.index_name = index_name
