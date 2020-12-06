@@ -1,6 +1,6 @@
 *.pyc
 *.db
 private_key_file.pem
-.vscode/settings.json
+.vscode
 *.db
 

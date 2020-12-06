@@ -10,6 +10,7 @@ class UserInfo(db.Model):
     Username = db.Column(db.String(20), nullable=False, unique=True)
     # Password = db.Column(db.String(20), nullable=True)
     Password_hash = db.Column(db.String(100), nullable=False)
+    PublicKey=db.Column(db.String(2024),nullable=True)
 
     def __init__(self, username, password):
         self.UserId = str(uuid.uuid1())
