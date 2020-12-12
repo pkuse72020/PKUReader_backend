@@ -38,7 +38,7 @@ def get_articles():
     #根据userid找关注
     try:
         #userfocuslink = UserInfo.query.filter_by(UserId=userid).all()
-        userfocuslink = userGetFavorRSS_links(userid)
+        userfocuslink = userGetFavorRSS_links_obj(userid)
         rsslist = [e['rsslink'] for e in userfocuslink]
     #rst = [{'_Id': e['_Id'], 'userId': e['userId'], 'rsslink': rssid2rsslink[e['rssId']],
     #        'rsstitle': rssid2rsstitle[e['rssId']]} for e in rst]
