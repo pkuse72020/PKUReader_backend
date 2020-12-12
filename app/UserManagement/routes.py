@@ -40,7 +40,6 @@ def signip():
 
 # 登陆
 # 传入参数格式{"username":...,"password":...}
-# 传入参数格式{"username":...,"password":...}
 # 成功时返回参数格式{"state":"success","UserId":...,"token":...}
 # 失败时返回参数格式{"state":"failed","description":...}
 @UserManagement.route('/login', methods=["POST", "GET"])
