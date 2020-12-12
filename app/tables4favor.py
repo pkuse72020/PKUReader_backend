@@ -77,6 +77,9 @@ class pendingMsg(db.Model):
 '''
 functions
 '''
+
+# 两个函数，用于将flask_sql的输出转化为可以直接网络传输的json格式
+# 用法：直接调用classlist2dictlist，输入可以是单个object或者多个object的列表
 def class2dict(class_entry):
     ret = {}
     remove_keys = ['_sa_instance_state']
@@ -92,6 +95,8 @@ def classlist2dictlist(class_entries):
     ret_list = [class2dict(e) for e in class_entries]
     return ret_list
 
+
+# 用户收藏一篇文章
 def userAddFavorArticle(userId, articleId):
     try:
         result = FavorArticle.query.filter_by(userId = userId, articleId = articleId).all()
@@ -118,7 +123,7 @@ def userAddFavorArticle(userId, articleId):
     else:
         return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
-
+# 用户获得所有收藏的文章
 def userGetFavorArticles(userId):
     try:
         result = FavorArticle.query.filter_by(userId = userId).all()
@@ -127,6 +132,7 @@ def userGetFavorArticles(userId):
     return jsonify({'state':'success', "rst":classlist2dictlist(result)})
     # return [{'_Id':e._Id,'userId':e.userId, "articleId":e.articleId} for e in result]
 
+# 用户移除一篇收藏的文章
 def userRemoveFavorArticle(userId, articleId):
     try:
         result = FavorArticle.query.filter_by(userId = userId, articleId = articleId).first()
@@ -137,6 +143,7 @@ def userRemoveFavorArticle(userId, articleId):
     else:
         return jsonify({"state":'success', "description": "success"})
 
+# 用户增加一个RSS订阅
 def userAddFavorRSS(userId, RSSId):
     try:
         result = FavorRSS.query.filter_by(userId = userId, rssId = RSSId).all()
@@ -163,6 +170,7 @@ def userAddFavorRSS(userId, RSSId):
     else:
         return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
+# 用户获得所有已经订阅的RSS的id
 def userGetFavorRSSs(userId):
     try:
         result = FavorRSS.query.filter_by(userId = userId).all()
@@ -171,6 +179,8 @@ def userGetFavorRSSs(userId):
     return jsonify({'state':'success', "rst":classlist2dictlist(result)})
     # return [{'_Id':e._Id,'userId':e.userId, "rssId":e.rssId} for e in result]
 
+
+# 用户获得所有订阅的RSS的link和title
 def userGetFavorRSS_links(userId):
     try:
         result = FavorRSS.query.filter_by(userId = userId).all()
@@ -193,7 +203,7 @@ def userGetFavorRSS_links(userId):
         return jsonify({'state':'failed', "description": str(e.args[0])})
 
 
-
+# 用户移除一个RSS订阅
 def userRemoveFavorRSS(userId, RSSId):
     try:
         result =  FavorRSS.query.filter_by(userId = userId, rssId = RSSId).first()
@@ -204,6 +214,7 @@ def userRemoveFavorRSS(userId, RSSId):
     else:
         return jsonify({"state":'success', "description": "success"})
 
+# 用户提交一个rss申请请求
 def addPendingMsg(userId, rsstitle, rsslink):
     try:
         rsslink_result = KnownRSS.query.filter_by(rsslink = rsslink).all()
@@ -233,6 +244,7 @@ def addPendingMsg(userId, rsstitle, rsslink):
         # print(result[0].__dict__)
         return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
+# 管理员获得所有请求队列中未审核的内容
 def getPendingMsg(administratorId):
     try:
         result = pendingMsg.query.filter(pendingMsg.checkedByAdministrator == "None").all()
@@ -240,6 +252,7 @@ def getPendingMsg(administratorId):
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     return jsonify({'state':'success', "rst":classlist2dictlist(result)})
 
+# 管理员直接增加一个knownRSS数据记录
 def addKnownRSS(rsslink, rsstitle):
     try:
         rsslink_result = KnownRSS.query.filter_by(rsslink = rsslink).all()
@@ -269,6 +282,7 @@ def addKnownRSS(rsslink, rsstitle):
         return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
 
+# 管理员移除一个knownRSS记录
 def removeKnownRSS(rssId):
     try:
         result =  KnownRSS.query.filter_by(rssId = rssId).first()
@@ -279,6 +293,8 @@ def removeKnownRSS(rssId):
     else:
         return jsonify({"state":'success', "description": "success"})
 
+
+# 管理员审核等待队列中的内容记录，包括approved = True为批准通过 和 approved = False为批准未通过
 def modifyPendingMsg(administratorId, pendingMsg_id, approved = True):
 
     try:
@@ -303,6 +319,7 @@ def modifyPendingMsg(administratorId, pendingMsg_id, approved = True):
         db.session.commit()
         return jsonify({"state":"success", "description": "success"})
 
+# 获取所有knownRSS内容
 def getAllRSS():
     try:
         result = KnownRSS.query.all()
