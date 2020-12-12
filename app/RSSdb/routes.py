@@ -1,75 +1,81 @@
-from app.UserManagement import UserManagement
+from app.RSSdb import RSSdb
 
 from flask import request, session, jsonify
 
-from app.tables import UserInfo
-from app import db, auth
-from app.token_auth import generate_auth_token
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
-from app import pubkey, privkey
-import rsa
+from app.tables4favor import KnownRSS, pendingMsg, addPendingMsg, getPendingMsg, addKnownRSS, removeKnownRSS, modifyPendingMsg, getAllRSS
+from app import db
 
-
-
-@UserManagement.route('/')
+@RSSdb.route('/')
 def hello_world():
-    return "hello!"
+    return "hello RSSdb!"
 
-# 注册
-# 传入参数格式{"username":...,"password":...}
-# 成功时返回参数格式{"state":"success","UserId":...}
-# 失败时返回参数格式{"state":"failed","description":...}
-@UserManagement.route('/signup', methods=["POST", "GET"])
-def signip():
+@RSSdb.route('/addPendingMsg', methods=["POST", "GET"])
+def addPendingMsg_func():
     if request.method == "GET":
-        username = request.args.get("username")
-        password = request.args.get("password")
+        userId = request.args.get("userId")
+        rsstitle = request.args.get("rsstitle")
+        rsslink = request.args.get("rsslink")
     else:
-        username = request.form.get("username")
-        password = request.form.get("password")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
-    info = UserInfo(username, password)
-    try:
-        db.session.add(info)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"state": "failed", "description": e.args[0]})
-    return jsonify({"state": "success", "UserId": info.UserId})
+        userId = request.form.get("userId")
+        rsstitle = request.form.get("rsstitle")
+        rsslink = request.form.get("rsslink")
+    rst = addPendingMsg(userId, rsstitle, rsslink)
+    return rst
 
-# 登陆
-# 传入参数格式{"username":...,"password":...}
-# 传入参数格式{"username":...,"password":...}
-# 成功时返回参数格式{"state":"success","UserId":...,"token":...}
-# 失败时返回参数格式{"state":"failed","description":...}
-@UserManagement.route('/login', methods=["POST", "GET"])
-def login():
+@RSSdb.route('/getPendingMsg', methods=["POST", "GET"])
+def getPendingMsg_func():
     if request.method == "GET":
-        username = request.args.get("username")
-        password = request.args.get("password")
+        userId = request.args.get("userId")
     else:
-        username = request.form.get("username")
-        password = request.form.get("password")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
-    try:
-        result = UserInfo.query.filter_by(Username=username).all()
-    except Exception as e:
-        return jsonify({"state":"failed","description":e.args[0]})
-    if (len(result) == 0):
-        return jsonify({"state":"failed","description":"No such user."})
-    if (len(result) != 1):
-        return jsonify({"state": "failed", "description": "There are multiple lines in database with the same Username."})
-    else:
-        result = result[0]
-        if result.checkPassword(password):
-            return jsonify({"state": "success","UserId":result.UserId,"token":generate_auth_token(result.UserId,result.Password_hash)})
-        else:
-            return jsonify({"state": "failed", "description": "Wrong password."})
-            
+        userId = request.form.get("userId")
+    rst = getPendingMsg(userId)
+    return rst
 
-@UserManagement.route('/token_test', methods=["GET", "POST"])
-@auth.login_required
-def token_test():
-    return "token success"
+@RSSdb.route('/addKnownRSS', methods=["POST", "GET"])
+def addKnownRSS_func():
+    if request.method == "GET":
+        rsslink = request.args.get("rsslink")
+        rsstitle = request.args.get("rsstitle")
+    else:
+        rsslink = request.form.get("rsslink")
+        rsstitle = request.form.get("rsstitle")
+    rst = addKnownRSS(rsslink, rsstitle)
+    return rst
+
+
+@RSSdb.route('/removeKnownRSS', methods=["POST", "GET"])
+def removeKnownRSS_func():
+    if request.method == "GET":
+        rssId = request.args.get("rssId")
+    else:
+        rssId = request.form.get("rssId")
+    rst = removeKnownRSS(rssId)
+    return rst
+
+@RSSdb.route('/approvePendingMsg', methods=["POST", "GET"])
+def approvePendingMsg_func():
+    if request.method == "GET":
+        administratorId = request.args.get("administratorId")
+        pendingMsg_id = request.args.get("pendingMsg_id")
+    else:
+        administratorId = request.form.get("administratorId")
+        pendingMsg_id = request.form.get("pendingMsg_id")
+    rst = modifyPendingMsg(administratorId, pendingMsg_id, approved=True)
+    return rst
+
+@RSSdb.route('/rejectPendingMsg', methods=["POST", "GET"])
+def rejectPendingMsg_func():
+    if request.method == "GET":
+        administratorId = request.args.get("administratorId")
+        pendingMsg_id = request.args.get("pendingMsg_id")
+    else:
+        administratorId = request.form.get("administratorId")
+        pendingMsg_id = request.form.get("pendingMsg_id")
+    rst = modifyPendingMsg(administratorId, pendingMsg_id, approved=False)
+    return rst
+
+
+
+@RSSdb.route('/getAllRSS')
+def getAllRSS_debug():
+    return getAllRSS()

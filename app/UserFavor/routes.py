@@ -1,66 +1,81 @@
-from app.UserManagement import UserManagement
+from app.UserFavor import UserFavor
 
 from flask import request, session, jsonify
 
-from app.tables import UserInfo
+from app.tables4favor import FavorRSS, FavorArticle, userAddFavorArticle, userGetFavorArticles, userRemoveFavorArticle ,userGetFavorRSSs, userAddFavorRSS, userRemoveFavorRSS
 from app import db
-import rsa
 
-
-
-@UserManagement.route('/')
+@UserFavor.route('/')
 def hello_world():
-    return "hello!"
+    return "hello UserFavor!"
 
-# 注册
-# 传入参数格式{"username":...,"password":...}
-# 成功时返回参数格式{"state":"success","UserId":...}
-# 失败时返回参数格式{"state":"failed","description":...}
-@UserManagement.route('/addFavorArticle', methods=["POST", "GET"])
+
+
+@UserFavor.route('/addFavorArticle', methods=["POST", "GET"])
 def addUserArticle_func():
     if request.method == "GET":
-        username = request.args.get("user_id")
-        password = request.args.get("article_id")
+        userId = request.args.get("userId")
+        articleId = request.args.get("articleId")
     else:
-        username = request.form.get("user_id")
-        password = request.form.get("article_id")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
-    info = UserInfo(username, password)
-    try:
-        db.session.add(info)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"state": "failed", "description": e.args[0]})
-    return jsonify({"state": "success", "UserId": info.UserId})
+        userId = request.form.get("userId")
+        articleId = request.form.get("articleId")
+    rst = userAddFavorArticle(userId, articleId)
+    return rst
 
-# 登陆
-# 传入参数格式{"username":...,"password":...}
-# 传入参数格式{"username":...,"password":...}
-# 成功时返回参数格式{"state":"success","UserId":...,"token":...}
-# 失败时返回参数格式{"state":"failed","description":...}
-@UserManagement.route('/login', methods=["POST", "GET"])
-def login():
+@UserFavor.route('/getFavorArticle', methods=["POST", "GET"])
+def getUserArticle_func():
     if request.method == "GET":
-        username = request.args.get("username")
-        password = request.args.get("password")
+        userId = request.args.get("userId")
     else:
-        username = request.form.get("username")
-        password = request.form.get("password")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
-    try:
-        result = UserInfo.query.filter_by(Username=username).all()
-    except Exception as e:
-        return jsonify({"state":"failed","description":e.args[0]})
-    if (len(result) == 0):
-        return jsonify({"state":"failed","description":"No such user."})
-    if (len(result) != 1):
-        return jsonify({"state": "failed", "description": "There are multiple lines in database with the same Username."})
+        userId = request.form.get("userId")
+    rst = userGetFavorArticles(userId)
+    return rst
+
+@UserFavor.route('/removeFavorArticle', methods=["POST", "GET"])
+def removeUserArticle_func():
+    if request.method == "GET":
+        userId = request.args.get("userId")
+        articleId = request.args.get("articleId")
     else:
-        result = result[0]
-        if result.checkPassword(password):
-            return jsonify({"state": "success","UserId":result.UserId,"token":generate_auth_token(result.UserId,result.Password_hash)})
-        else:
-            return jsonify({"state": "failed", "description": "Wrong password."})
+        userId = request.form.get("userId")
+        articleId = request.form.get("articleId")
+    rst = userRemoveFavorArticle(userId, articleId)
+    return rst
+
+@UserFavor.route('/addFavorRSS', methods=["POST", "GET"])
+def addUserRSS_func():
+    if request.method == "GET":
+        userId = request.args.get("userId")
+        RSSId = request.args.get("RSSId")
+    else:
+        userId = request.form.get("userId")
+        RSSId = request.form.get("RSSId")
+    rst = userAddFavorRSS(userId, RSSId)
+    return rst
+
+@UserFavor.route('/getFavorRSS', methods=["POST", "GET"])
+def getUserRSS_func():
+    if request.method == "GET":
+        userId = request.args.get("userId")
+    else:
+        userId = request.form.get("userId")
+    rst = userGetFavorRSSs(userId)
+    return rst
+
+@UserFavor.route('/removeFavorRSS', methods=["POST", "GET"])
+def removeUserRSS_func():
+    if request.method == "GET":
+        userId = request.args.get("userId")
+        RSSId = request.args.get("RSSId")
+    else:
+        userId = request.form.get("userId")
+        RSSId = request.form.get("RSSId")
+    rst = userRemoveFavorRSS(userId, RSSId)
+    return rst
+
+
+@UserFavor.route('/getAllFavor')
+def getAllFavor_debug():
+    FavorRSS_result = FavorRSS.query.all()
+    FavorArticle_result = FavorArticle.query.all()
+    return jsonify({'rss':FavorRSS_result, 'article':FavorArticle_result})
