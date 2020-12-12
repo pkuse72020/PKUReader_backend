@@ -49,6 +49,7 @@ def removeKnownRSS_func():
         rssId = request.args.get("rssId")
     else:
         rssId = request.form.get("rssId")
+    rssId = int(rssId)
     rst = removeKnownRSS(rssId)
     return rst
 
@@ -60,6 +61,7 @@ def approvePendingMsg_func():
     else:
         administratorId = request.form.get("administratorId")
         pendingMsg_id = request.form.get("pendingMsg_id")
+    pendingMsg_id = int(pendingMsg_id)
     rst = modifyPendingMsg(administratorId, pendingMsg_id, approved=True)
     return rst
 
@@ -71,11 +73,12 @@ def rejectPendingMsg_func():
     else:
         administratorId = request.form.get("administratorId")
         pendingMsg_id = request.form.get("pendingMsg_id")
+    pendingMsg_id = int(pendingMsg_id)
     rst = modifyPendingMsg(administratorId, pendingMsg_id, approved=False)
     return rst
 
 
 
-@RSSdb.route('/getAllRSS')
+@RSSdb.route('/getAllRSS', methods=["POST", "GET"])
 def getAllRSS_debug():
     return getAllRSS()

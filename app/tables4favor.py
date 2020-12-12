@@ -77,6 +77,20 @@ class pendingMsg(db.Model):
 '''
 functions
 '''
+def class2dict(class_entry):
+    ret = {}
+    remove_keys = ['_sa_instance_state']
+    for e in class_entry.__dict__:
+        if e in remove_keys:
+            continue
+        ret[e] = class_entry.__dict__[e]
+    return ret
+
+def classlist2dictlist(class_entries):
+    if type(class_entries) != type([]):
+        class_entries = [class_entries]
+    ret_list = [class2dict(e) for e in class_entries]
+    return ret_list
 
 def userAddFavorArticle(userId, articleId):
     try:
@@ -85,7 +99,7 @@ def userAddFavorArticle(userId, articleId):
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     
     if len(result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed", "moreMsg":result})
+        return jsonify({'state':'failed', "description": "first query existed", "moreMsg":classlist2dictlist(result)})
 
     info = FavorArticle(userId, articleId)
     try:
@@ -102,7 +116,7 @@ def userAddFavorArticle(userId, articleId):
     if len(result) == 0:
         return jsonify({'state':'failed', "description": "third query failed with no queryMsg"})
     else:
-        return jsonify({"state":'success', "description": "success", "moreMsg":result})
+        return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
 
 def userGetFavorArticles(userId):
@@ -110,7 +124,7 @@ def userGetFavorArticles(userId):
         result = FavorArticle.query.filter_by(userId = userId).all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
-    return jsonify({'state':'success', "rst":result})
+    return jsonify({'state':'success', "rst":classlist2dictlist(result)})
     # return [{'_Id':e._Id,'userId':e.userId, "articleId":e.articleId} for e in result]
 
 def userRemoveFavorArticle(userId, articleId):
@@ -125,12 +139,12 @@ def userRemoveFavorArticle(userId, articleId):
 
 def userAddFavorRSS(userId, RSSId):
     try:
-        result = FavorRSS.query.filter_by(userId = userId, RSSId = RSSId).all()
+        result = FavorRSS.query.filter_by(userId = userId, rssId = RSSId).all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     
     if len(result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed", "moreMsg":result})
+        return jsonify({'state':'failed', "description": "first query existed", "moreMsg":classlist2dictlist(result)})
 
     info = FavorRSS(userId, RSSId)
     try:
@@ -141,25 +155,48 @@ def userAddFavorRSS(userId, RSSId):
         return jsonify({'state':'failed', "description": "second query failed with error: " + str(e.args[0])})
     
     try:
-        result = FavorRSS.query.filter_by(userId = userId, RSSId = RSSId).all()
+        result = FavorRSS.query.filter_by(userId = userId, rssId = RSSId).all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "third query failed with errors: " + str(e.args[0])})
     if len(result) == 0:
         return jsonify({'state':'failed', "description": "third query failed with no queryMsg"})
     else:
-        return jsonify({"state":'success', "description": "success", "moreMsg":result})
+        return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
 def userGetFavorRSSs(userId):
     try:
         result = FavorRSS.query.filter_by(userId = userId).all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
-    return jsonify({'state':'success', "rst":result})
+    return jsonify({'state':'success', "rst":classlist2dictlist(result)})
     # return [{'_Id':e._Id,'userId':e.userId, "rssId":e.rssId} for e in result]
+
+def userGetFavorRSS_links(userId):
+    try:
+        result = FavorRSS.query.filter_by(userId = userId).all()
+    except Exception as e:
+        return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
+    rst = classlist2dictlist(result)
+    try:
+        allrss_rst = KnownRSS.query.all()
+        allrss_rst = classlist2dictlist(allrss_rst)
+    except Exception as e:
+        return jsonify({'state':'failed', "description": str(e.args[0])})
+    
+    try:
+        all_rss = allrss_rst
+        rssid2rsslink = {e['rssId']:e['rsslink'] for e in all_rss}
+        rssid2rsstitle = {e['rssId']:e['rsstitle'] for e in all_rss}
+        rst = [{'_Id':e['_Id'], 'userId':e['userId'], 'rsslink':rssid2rsslink[e['rssId']],'rsstitle':rssid2rsstitle[e['rssId']]} for e in rst]
+        return jsonify({'state':'success', "rst":rst})
+    except Exception as e:
+        return jsonify({'state':'failed', "description": str(e.args[0])})
+
+
 
 def userRemoveFavorRSS(userId, RSSId):
     try:
-        result =  FavorRSS.query.filter_by(userId = userId, RSSId = RSSId).first()
+        result =  FavorRSS.query.filter_by(userId = userId, rssId = RSSId).first()
         db.session.delete(result)
         db.session.commit()
     except Exception as e:
@@ -174,9 +211,9 @@ def addPendingMsg(userId, rsstitle, rsslink):
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     if len(rsslink_result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed with rsslink", "moreMsg":rsslink_result})
+        return jsonify({'state':'failed', "description": "first query existed with rsslink", "moreMsg":classlist2dictlist(rsslink_result)})
     if len(rsstitle_result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed with rsstitle", "moreMsg":rsstitle_result})
+        return jsonify({'state':'failed', "description": "first query existed with rsstitle", "moreMsg":classlist2dictlist(rsstitle_result)})
 
     info = pendingMsg(userId, rsstitle, rsslink)
     try:
@@ -193,14 +230,15 @@ def addPendingMsg(userId, rsstitle, rsslink):
     if len(result) == 0:
         return jsonify({'state':'failed', "description": "third query failed with no queryMsg"})
     else:
-        return jsonify({"state":'success', "description": "success", "moreMsg":result})
+        # print(result[0].__dict__)
+        return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
 def getPendingMsg(administratorId):
     try:
-        result = pendingMsg.query.filter(pendingMsg.checkedByAdministrator != "None").all()
+        result = pendingMsg.query.filter(pendingMsg.checkedByAdministrator == "None").all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
-    return jsonify({'state':'success', "rst":result})
+    return jsonify({'state':'success', "rst":classlist2dictlist(result)})
 
 def addKnownRSS(rsslink, rsstitle):
     try:
@@ -209,9 +247,9 @@ def addKnownRSS(rsslink, rsstitle):
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     if len(rsslink_result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed with rsslink", "moreMsg":rsslink_result})
+        return jsonify({'state':'failed', "description": "first query existed with rsslink", "moreMsg":classlist2dictlist(rsslink_result)})
     if len(rsstitle_result) != 0:
-        return jsonify({'state':'failed', "description": "first query existed with rsstitle", "moreMsg":rsstitle_result})
+        return jsonify({'state':'failed', "description": "first query existed with rsstitle", "moreMsg":classlist2dictlist(rsstitle_result)})
 
     info = KnownRSS(rsslink, rsstitle)
     try:
@@ -228,7 +266,7 @@ def addKnownRSS(rsslink, rsstitle):
     if len(result) == 0:
         return jsonify({'state':'failed', "description": "third query failed with no queryMsg"})
     else:
-        return jsonify({"state":'success', "description": "success", "moreMsg":result})
+        return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
 
 def removeKnownRSS(rssId):
@@ -245,7 +283,7 @@ def modifyPendingMsg(administratorId, pendingMsg_id, approved = True):
 
     try:
         result = pendingMsg.query.filter_by(_Id = pendingMsg_id).all()
-        result = [e for e in result if e.checkedByAdministrator != "None"]
+        result = [e for e in result if e.checkedByAdministrator == "None"]
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     if len(result) == 0:
@@ -254,6 +292,7 @@ def modifyPendingMsg(administratorId, pendingMsg_id, approved = True):
 
     if approved:
         addKnownRSS_rst = addKnownRSS(result.rsslink, result.rsstitle)
+        # if addKnownRSS_rst['state']
         result.checkedByAdministrator = str(administratorId)
         db.session.delete(result)
         db.session.commit()
@@ -269,4 +308,4 @@ def getAllRSS():
         result = KnownRSS.query.all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
-    return jsonify({'state':'success', "rst":result})
+    return jsonify({'state':'success', "rst":classlist2dictlist(result)})

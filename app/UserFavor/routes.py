@@ -2,7 +2,7 @@ from app.UserFavor import UserFavor
 
 from flask import request, session, jsonify
 
-from app.tables4favor import FavorRSS, FavorArticle, userAddFavorArticle, userGetFavorArticles, userRemoveFavorArticle ,userGetFavorRSSs, userAddFavorRSS, userRemoveFavorRSS
+from app.tables4favor import FavorRSS, FavorArticle, userAddFavorArticle, userGetFavorArticles, userRemoveFavorArticle ,userGetFavorRSSs, userAddFavorRSS, userRemoveFavorRSS, userGetFavorRSS_links,classlist2dictlist
 from app import db
 
 @UserFavor.route('/')
@@ -62,6 +62,15 @@ def getUserRSS_func():
     rst = userGetFavorRSSs(userId)
     return rst
 
+@UserFavor.route('/getFavorRSSlinks', methods=["POST", "GET"])
+def getFavorRSSlinks_func():
+    if request.method == "GET":
+        userId = request.args.get("userId")
+    else:
+        userId = request.form.get("userId")
+    rst = userGetFavorRSS_links(userId)
+    return rst
+
 @UserFavor.route('/removeFavorRSS', methods=["POST", "GET"])
 def removeUserRSS_func():
     if request.method == "GET":
@@ -74,8 +83,9 @@ def removeUserRSS_func():
     return rst
 
 
-@UserFavor.route('/getAllFavor')
+@UserFavor.route('/getAllFavor', methods=["POST", "GET"])
+# 测试用
 def getAllFavor_debug():
     FavorRSS_result = FavorRSS.query.all()
     FavorArticle_result = FavorArticle.query.all()
-    return jsonify({'rss':FavorRSS_result, 'article':FavorArticle_result})
+    return jsonify({'rss':classlist2dictlist(FavorRSS_result), 'article':classlist2dictlist(FavorArticle_result)})
