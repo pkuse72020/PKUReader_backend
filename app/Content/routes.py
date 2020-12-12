@@ -8,6 +8,7 @@ def hello_world():
 
 from app import db, es
 from app.tables import *
+from app.tables4favor import *
 from NLProcess.tools import html2txt, tokenizer, getEachPOS, getKeywords
 
 @Content.route('/getArticles', methods=["POST", "GET"])
@@ -36,11 +37,14 @@ def get_articles():
 
     #根据userid找关注
     try:
-        userfocus = UserInfo.query.filter_by(UserId=userid).all()
+        #userfocuslink = UserInfo.query.filter_by(UserId=userid).all()
+        userfocuslink = userGetFavorRSS_links(userid)
+        rsslist = [e['rsslink'] for e in userfocuslink]
+    #rst = [{'_Id': e['_Id'], 'userId': e['userId'], 'rsslink': rssid2rsslink[e['rssId']],
+    #        'rsstitle': rssid2rsstitle[e['rssId']]} for e in rst]
     except Exception as e:
         return jsonify({"state": "failed", "description": e.args[0]})
 
-    rsslist = [e.RSSurl for e in userfocus]
     article_list = []
 
     if (len(rsslist) == 0):
@@ -66,7 +70,7 @@ def get_articles():
             newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
                         'id':cur_article.ArticleId}
             es.insert_data(newsdata)
-            article_list.append(jsonify(newsdata))
+            article_list.append(jsonify(newsdata)) #TODO wiki内容
 
     return article_list
 
