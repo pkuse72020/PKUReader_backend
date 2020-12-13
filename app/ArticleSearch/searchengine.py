@@ -2,6 +2,7 @@ from app.ArticleSearch import NewsElasticEngine
 
 def test():
     es = NewsElasticEngine()
+    #es.rebuild_database("news","news")
     datas = [
         {
             'title': '美国留给伊拉克的是个烂摊子吗',
