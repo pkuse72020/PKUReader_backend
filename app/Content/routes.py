@@ -27,9 +27,9 @@ def get_articles():
     try:
         userlist = UserInfo.query.filter_by(Username=username).all()
     except Exception as e:
-        return jsonify({"state": "failed", "description": e.args[0]})
+        return jsonify({"state": "failed", "description": e.args[0] + "fail to find user!"})
     if (len(userlist) == 0):
-        return jsonify({"state": "failed", "description": "No such user."})
+        return jsonify({"state": "failed", "description": "No such user!"})
     if (len(userlist) != 1):
         return jsonify({"state": "failed", "description": "There are multiple lines in database with the same Username."})
     user = userlist[0]
@@ -39,29 +39,37 @@ def get_articles():
     try:
         #userfocuslink = UserInfo.query.filter_by(UserId=userid).all()
         userfocuslink = userGetFavorRSS_links_obj(userid)
-        rsslist = [e['rsslink'] for e in userfocuslink]
+        if userfocuslink['rst'] != None:
+            rsslist = [e['rsslink'] for e in userfocuslink['rst']]
+        else:
+            return jsonify({"state": "failed", "description": "get favor error"})
     #rst = [{'_Id': e['_Id'], 'userId': e['userId'], 'rsslink': rssid2rsslink[e['rssId']],
     #        'rsstitle': rssid2rsstitle[e['rssId']]} for e in rst]
     except Exception as e:
-        return jsonify({"state": "failed", "description": e.args[0]})
+        return jsonify({"state": "failed", "description": e.args[0] + " fail to find rss"})
 
     article_list = []
 
     if (len(rsslist) == 0):
-        rsslist = ["https://rsshub.app/aiyanxishe/109/hot", "https://rsshub.app/005tv/zx/latest"]
+        rsslist = ["https://rsshub.app/allpoetry/newest", "https://rsshub.app/wenku8/chapter/74"]
 
+    #print("rsslist is: ", len(rsslist))
     for rssfeed in rsslist:
         entries = feedparser.parse(rssfeed).entries
         if len(entries) > 5:
             entries = entries[:5]
+        #print("length of entries: ", len(entries))
         for e in entries:
-            article = Article(e.title, e.summary)
+            cur_title = html2txt(e.title)
+            cur_summary = html2txt(e.summary)
+            article = Article(cur_title, cur_summary)
+            #print(e.title)
             db.session.add(article)
             #把文章关键词找出来
-            text = html2txt(e.summary)
+            text = cur_summary
             keywordList = getKeywords(text)
             #关键词入库
-            cur_article = db.session.query.filter_by(ArticleTitle=e.title).all()[0]
+            cur_article = Article.query.filter_by(ArticleTitle=e.title).all()[0]
             #TODO 需要检查
             for word in keywordList:
                 cur_a2k = Article2Keyword(cur_article.ArticleId, word)
@@ -70,9 +78,10 @@ def get_articles():
             newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
                         'id':cur_article.ArticleId}
             es.insert_data(newsdata)
-            article_list.append(jsonify(newsdata)) #TODO wiki内容
-
-    return article_list
+            article_list.append(newsdata) #TODO wiki内容
+            index = range(len(article_list))
+            article_dict = dict(zip(index, article_list))
+    return jsonify({'state': 'success', 'article_list': article_list})
 
 @Content.route('/search', methods=["POST", "GET"])
 def search():
@@ -86,4 +95,4 @@ def search():
     else:
         searchword = request.form.get("searchword")
 
-    print(es.search_news(searchword))
+    return jsonify({'state': 'success', 'result': es.search_news(searchword)})

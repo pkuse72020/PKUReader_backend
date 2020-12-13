@@ -28,7 +28,7 @@ class FocusArticle(db.Model):
                      unique=True, primary_key=True)
     UserId = db.Column(db.String(100), db.ForeignKey('UserInfo.UserId'))
     ArticleId = db.Column(db.String(100))
-    user = db.relationship("UserInfo", back_populates="FocusArticle")
+    #user = db.relationship("UserInfo", back_populates="FocusArticle")
     def __init__(self, _userid, _articleid):
         self.FAId = str(uuid.uuid4())
         self.UserId = _userid
@@ -44,7 +44,7 @@ class FocusFeed(db.Model):
     UserId = db.Column(db.String(100), db.ForeignKey('UserInfo.UserId'))
     RSSTitle = db.Column(db.String(100))
     RSSurl = db.Column(db.String(200))
-    user = db.relationship("UserInfo", back_populates="FocusFeed")
+    #user = db.relationship("UserInfo", back_populates="FocusFeed")
 
     def __init__(self, _userid, _title, _url):
         self.FFId = str(uuid.uuid4())
@@ -72,7 +72,7 @@ class Article2Keyword(db.Model):
     A2Kid = db.Column(db.String(100), nullable=False,
                       unique=True, primary_key=True)
     ArticleId = db.Column(db.String(100), db.ForeignKey("Article.ArticleId"))
-    article = db.relationship("Article", back_populates="Article2Keyword")
+    #article = db.relationship("Article", back_populates="Article2Keyword")
     #ArticleId = db.Column(db.String(100))
     Keyword = db.Column(db.String(100))
 
