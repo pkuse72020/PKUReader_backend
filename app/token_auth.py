@@ -18,8 +18,9 @@ def verify_auth_token(token, password):  # 注意只能两个参数
     try:
         data = s.loads(token)  
     except SignatureExpired:
-        raise SignatureExpired('令牌已过期')
+        # raise SignatureExpired('令牌已过期')
+        return False
     except BadSignature:
-        raise BadSignature('令牌不合法')
+        return False
     return True
  
