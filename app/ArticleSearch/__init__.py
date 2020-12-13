@@ -12,21 +12,21 @@ class NewsElasticEngine():
                 'title': {
                     'type': 'text',
                     'analyzer': 'ik_max_word',
-                    'search_analyzer': 'ik_max_word'
+                    'search_analyzer': 'ik_smart'
                 },
                 'article': {
                     'type': 'text',
                     'analyzer': 'ik_max_word',
-                    'search_analyzer': 'ik_max_word'
+                    'search_analyzer': 'ik_smart'
                 }
             }
         }
 
-    def rebuild_database(self):
-        self.es.indices.delete(index=self.index_name, ignore=[400, 404])
-        self.es.indices.create(index='news', ignore=400)
+    def rebuild_database(self, index_name, doc_type):
+        self.es.indices.delete(index=index_name, ignore=[400, 404])
+        self.es.indices.create(index=index_name, ignore=400)
         result = self.es.indices.put_mapping(
-            index=self.index_name, doc_type=self.doc_type, body=self.mapping, include_type_name=True)
+            index=index_name, doc_type=doc_type, body=self.mapping, include_type_name=True)
         return result
 
     def insert_data(self, input_data):
