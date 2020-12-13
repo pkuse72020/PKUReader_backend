@@ -6,6 +6,6 @@ from app.ArticleSearch.searchengine import test
 if __name__ == "__main__":
     db.drop_all()
     db.create_all()
-    # app.run(debug=True)
-    test()
+    app.run(debug=True)
+    #test()
     
