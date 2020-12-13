@@ -1,11 +1,22 @@
-# 后端访问API文档
+ # API文档
 
-## UserManagement
+
+<!-- TOC -->
+
+- [API文档](#api文档)
+  - [**UserManagement**](#usermanagement)
+    - [token的使用方式](#token的使用方式)
+    - [/user/signup](#usersignup)
+    - [/user/login](#userlogin)
+    - [/user/token_test](#usertoken_test)
+
+<!-- /TOC -->
+## **UserManagement**
 此模块主要用于进行用户的登录、注册、以及token的验证工作
 
 **现阶段用户名以及密码传输均采用明文传输，后续会考虑使用rsa加密传输**
 
-## **token的使用方式**
+### token的使用方式
 
 拿到token后，使用方法为在http请求的header中添加一项(此方法手动构建header，可以考虑其他方法)
 ```
@@ -21,9 +32,17 @@
 ```
 否则，服务器会返回状态码401(UNAUTHORIZED)，表明失效
 
+对于后端任意函数，如果要求只有登录状态才能使用，须在函数定义前加
+```
+@auth.login_required
+def example():
+    # do something
+```
+这样就会自动使用上述token验证机制
 
 
-## /user/signup
+
+### /user/signup
 此路径用于进行用户注册
 
 支持Get方法和Post方法
@@ -54,7 +73,7 @@
 ```
 
 
-## /user/login
+### /user/login
 此路径用于进行用户登录
 
 支持Get方法和Post方法
@@ -86,7 +105,7 @@
 }
 ```
 
-## /user/token_test
+### /user/token_test
 用于验证token是否还有效。如果token无效需要重新登录获取token
 
 
