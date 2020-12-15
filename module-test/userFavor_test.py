@@ -1,4 +1,7 @@
 import unittest
+
+from flask.wrappers import Response
+from requests.api import request
 from app import app, db
 import random
 import json
@@ -8,7 +11,10 @@ import base64
 class UserFavorTestCase(unittest.TestCase):
     user_ids = []
     rsshub_url = 'http://39.98.93.128:5001/'
-    rsshub_list = []
+    rsshub_list = [('央视新闻 tech', 'http://39.98.93.128:5001/cctv/tech'),('AI研习社', 'http://39.98.93.128:5001/aiyanxishe/all')]
+    user_name = 'test_user1'
+    article_id = [1,2]
+    # rss_id = [1,2]
 
     @classmethod
     def setUpClass(cls):
@@ -29,51 +35,82 @@ class UserFavorTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def getUserArticle(self, len_num):
+        data = {'userId':UserFavorTestCase.user_name}
+        response = self.client.post("/userfavor/getFavorArticle",data = data)
+        response = json.load(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        allArticle_len = len(response['rst'])
+        self.assertEqual(len_num, allArticle_len)
+
     def test_1_addAndRemoveRSS(self):
-        data = {"username": "gyq", "password": "123456"}
-        response = self.client.post("/user/signup", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "success"}, response)
-        response = self.client.post("/user/signup", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "failed"}, response)
+        for e in UserFavorTestCase.article_id:
+            data = {'userId':UserFavorTestCase.user_name, 'articleId': e}
+            response = self.client.post("/userfavor/addFavorArticle", data = data)
+            response = json.load(response)
+        self.getUserArticle(2)
 
-    def test_login(self):
-        data = {"username": "gyq", "password": "123456"}
-        response = self.client.post("/user/signup", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "success"}, response)
-        data = {"username": "gyq", "password": "123456"}
-        response = self.client.post("/user/login", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "success"}, response)
-        data = {"username": "gyq123", "password": "123456"}
-        response = self.client.post("/user/login", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset(
-            {"state": "failed", "description": "No such user."}, response)
-        data = {"username": "gyq", "password": "123"}
-        response = self.client.post("/user/login", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset(
-            {"state": "failed", "description": "Wrong password."}, response)
+        data = {'userId':UserFavorTestCase.user_name, 'articleId': 1}
+        response = self.client.post("/userfavor/removeFavorArticle", data = data)
+        response = json.load(response)
+        self.assertDictContainsSubset({"state":"success"}, response)
 
-    def test_token_test(self):
-        data = {"username": "gyq", "password": "123456"}
-        response = self.client.post("/user/signup", data=data)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "success"}, response)
-        data = {"username": "gyq", "password": "123456"}
-        response = self.client.post("/user/login", data=data)
-        response = json.loads(response.data)
-        token = response['token']
-        headers = {"Authorization": "basic " +
-                   base64.b64encode((token + ":").encode("utf-8")).decode("utf-8")}
-        response = self.client.post("/user/token_test", headers=headers)
-        self.assertEqual(response.status_code, 200)
-        response = json.loads(response.data)
-        self.assertDictContainsSubset({"state": "success"}, response)
-        headers = {"Authorization": "basic " +
-                   base64.b64encode((token).encode("utf-8")).decode("utf-8")}
-        response = self.client.post("/user/token_test", headers=headers)
-        self.assertEqual(response.status_code, 401)
+        self.getUserArticle(1)
+
+        data = {'userId':UserFavorTestCase.user_name, 'articleId': 1}
+        response = self.client.post("/userfavor/removeFavorArticle", data = data)
+        response = json.load(response)
+        self.assertDictContainsSubset({"state":"failed"}, response)
+
+        self.getUserArticle(1)
+
+
+    
+    def test_2_addRSS(self):
+        for e in UserFavorTestCase.rsshub_list:
+            data = {'rsslink':e[1],'rsstitle':e[0]}
+            response = self.client.post("/rssdb/addKnownRSS",data = data)
+            response = json.load(response.data)
+            self.assertDictContainsSubset({"state":"success"}, response)
+
+    def getUserRSS(self, len_num):
+        data = {'userId':UserFavorTestCase.user_name}
+        response = self.client.post("/userfavor/getFavorRSS",data = data)
+        response = json.load(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        allArticle_len = len(response['rst'])
+        self.assertEqual(len_num, allArticle_len)
+
+    def test_3_addAndRemoveArticle(self):
+        response = self.client.post("/rssdb/getAllRSS")
+        response = json.load(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        allRSSs = response['rst']
+        allRSS_ids = [e['rssId'] for e in allRSSs]
+        for e in allRSS_ids:
+            data = {'userId':UserFavorTestCase.user_name, "RSSId":e}
+            response = self.client.post("/userfavor/addFavorRSS",data = data)
+            response = json.load(response.data)
+        self.getUserRSS(len(allRSS_ids))
+
+        self.assertEqual(len(allRSS_ids), len(UserFavorTestCase.rsshub_list))
+
+        # test get rsslinks
+        data = {'userId':UserFavorTestCase.user_name}
+        response = self.client.post("/userfavor/getFavorRSSlinks",data = data)
+        response = json.load(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        allRSS_len = len(response['rst'])
+        self.assertEqual(len_num, allRSS_len)
+
+        # test remove rsslinks
+        data = {'userId':UserFavorTestCase.user_name, "RSSId":allRSS_ids[0]}
+        response = self.client.post("/userfavor/removeFavorRSS",data = data)
+        response = json.load(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        self.getUserRSS(len(allRSS_ids) - 1)
+        
+
+
+
+
