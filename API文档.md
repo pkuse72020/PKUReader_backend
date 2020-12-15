@@ -13,6 +13,10 @@
 
 [TOC]
 
+
+
+
+
 ## UserManagement
 此模块主要用于进行用户的登录、注册、以及token的验证工作
 
@@ -125,7 +129,7 @@ def example():
   ```json
   {
       'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
-      'articleId':'1' // 文章id，用字符串表示数字，用于唯一确定文章，对应文章数据库中的id
+      'articleId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e' // 文章id，用字符串表示数字，用于唯一确定文章，对应文章数据库中的id
   }
   ```
 
@@ -136,7 +140,7 @@ def example():
       ```json
       {
           'state': 'success', //成功状态
-          'moreMsg': [{'_Id': 1, 'articleId': 1, 'userId': 'test_user1'}], // 表示该添加内容在数据库中的项
+          'moreMsg': [{'_Id': 1, 'articleId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}], // 表示该添加内容在数据库中的项
           'description': 'success', // 成功描述
       } 
     ```
@@ -159,7 +163,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // user标识符，用于唯一确定用户的字符串
   }
   ```
   
@@ -169,10 +173,16 @@ def example():
 
       ```json
       {
-          'rst': [{'_Id': 1, 'articleId': 996, 'userId': 'test_user1'}], // 列表，每一项表示一条数据库记录
-          'state': 'success' // 成功状态
-      }
-      ```
+          'rst': [{'_Id': 1, 
+                   'articleId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', 
+                   'userId': 'b7451baa-3eda-11eb-a877-00163e0f2f21',
+                   'content': '  人民网北京12月15日电 （赵竹青）记者从国家航天局获悉，截至12月14日21时，“天问一号”探测器已在轨飞行144天，飞行里程约3.6亿公里，距离地球超过1亿公里，距离火星约1200万公里，飞行状态良好。   受天体运动规律影响，火星与地球距离在0.5亿公里至4亿多公里周期性发生变化。“天问一号”探测器到达火星附近时，距离地球约1.9亿公里。   “天问一号”自7月23日发射以来，已成功完成地月合照、探测器“自拍”、三次中途修正、一次深空机动、载荷自检等工作。后续，还将进行数次轨道修正，预计明年2月中旬接近火星后，实施“刹车”制动进入环火轨道，为火星着陆作准备。', 
+                 'keywords': {'0': '火星', '1': '距离', '2': '探测器', '3': '地球', '4': '深空', '5': '机动', '6': '天问', '7': '附近', '8': '修正', '9': '环火', '10': '赵竹青', '11': '北京', '12': '记者', '13': '人民网', '14': '国家航天局', '15': '轨道', '16': '规律', '17': '载荷', '18': '天体', '19': '周期性'}, 
+                 'title': '“天问一号”距地球超1亿公里 预计明年2月抵达火星'
+                }], // 列表，每一项表示一条数据库记录
+        'state': 'success' // 成功状态
+    }
+    ```
     
   - 失败时：
   
@@ -192,7 +202,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // user标识符，用于唯一确定用户的字符串
       'articleId':'1' // 文章id，用字符串表示数字，用于唯一确定文章，对应文章数据库中的id
   }
   ```
@@ -228,7 +238,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // user标识符，用于唯一确定用户的字符串
       'RSSId':'1' // RSSid，用字符串表示数字，用于唯一确定RSS，对应RSS数据库中的id
   }
   ```
@@ -240,7 +250,7 @@ def example():
       ```json
       {
           'state': 'success', //成功状态
-          'moreMsg': [{'_Id': 9, 'rssId': 1, 'userId': 'test_user1'}], // 表示该添加内容在数据库中的项
+          'moreMsg': [{'_Id': 9, 'rssId': 1, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}], // 表示该添加内容在数据库中的项
           'description': 'success', // 成功描述
       } 
     ```
@@ -263,7 +273,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // user标识符，用于唯一确定用户的字符串
   }
   ```
   
@@ -273,12 +283,12 @@ def example():
 
       ```json
       {
-          'rst': [{'_Id': 1, 'rssId': 1, 'userId': 'test_user1'},
-                  {'_Id': 2, 'rssId': 2, 'userId': 'test_user1'},
-                  {'_Id': 3, 'rssId': 5, 'userId': 'test_user1'},
-                  {'_Id': 4, 'rssId': 6, 'userId': 'test_user1'},
-                {'_Id': 5, 'rssId': 7, 'userId': 'test_user1'},
-                {'_Id': 6, 'rssId': 10, 'userId': 'test_user1'}], // 数据库内容
+          'rst': [{'_Id': 1, 'rssId': 1, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
+                  {'_Id': 2, 'rssId': 2, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
+                  {'_Id': 3, 'rssId': 5, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
+                  {'_Id': 4, 'rssId': 6, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
+                {'_Id': 5, 'rssId': 7, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
+                {'_Id': 6, 'rssId': 10, 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}], // 数据库内容
         'state': 'success' // 成功状态
     }
     ```
@@ -301,7 +311,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // user标识符，用于唯一确定用户的字符串
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // user标识符，用于唯一确定用户的字符串
   }
   ```
   
@@ -311,16 +321,17 @@ def example():
 
       ```json
       {
-          'rst': [{'_Id': 1,
+          'rst': [{'_Id': 1, // 这个没用，或许可以用来排序
+                   'rssId': 1, // 该rss的标识符
                    'rsslink': 'https://rss.injahow.cn/zhihu/people/activities/li-xi-mo-66',
                    'rsstitle': 'liximo66的知乎',
-                   'userId': 'test_user1'},
+                   'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'},
                   {'_Id': 2,
                    'rsslink': 'https://rss.injahow.cn/zhihu/hotlist',
                    'rsstitle': '知乎热搜',
-                 'userId': 'test_user1'}
+                 'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}
                 ], // 数据库内记录
-        'state': 'success' // 成功状态
+      'state': 'success' // 成功状态
     }
     ```
     
@@ -342,7 +353,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // 用户标识符
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // 用户标识符
       'RSSId':'11' // RSS标识符
   }
   ```
@@ -397,7 +408,7 @@ def example():
                    'checkedByAdministrator': 'None', // 该项表示该记录被哪个管理员处理了，在该api中全为None
                    'rsslink': 'www.baid1u.com',
                    'rsstitle': 'baidu1',
-                   'userId': 'test_user1'}
+                   'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}
           		], // 列表，每一项表示一个未处理的请求
           'state': 'success'}
       ```
@@ -421,7 +432,7 @@ def example():
 
   ```json
   {
-      'userId':'test_user1', // 用户标识符
+      'userId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // 用户标识符
       'rsstitle':'baidu', // 新的RSS申请的标题
       'rsslink':'www.baidu.com' // 新的RSS申请的链接
   }
@@ -438,7 +449,7 @@ def example():
                        'checkedByAdministrator': 'None',
                        'rsslink': 'www.baid1u.com',
                        'rsstitle': 'baidu1', 
-                       'userId': 'test_user1'}], // 该申请在数据库中的项的具体信息
+                       'userId': 'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e'}], // 该申请在数据库中的项的具体信息
           'state': 'success' // 成功状态
       }
       ```
@@ -477,7 +488,7 @@ def example():
 
   ```json
   {
-      'administratorId':'test_admin', // 管理员id
+      'administratorId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // 管理员id
       'pendingMsg_id':11 // 该申请的id
   }
   ```
@@ -531,7 +542,7 @@ def example():
 
   ```json
   {
-      'administratorId':'test_admin', // 管理员id
+      'administratorId':'bd6f7f6d-0b56-4ed5-9501-b829d8e78d3e', // 管理员id
       'pendingMsg_id':11 // 该申请的id
   }
   ```
@@ -689,9 +700,106 @@ def example():
       ```
   
 
+## content
+
+> 用于显示文章列表或搜索文章
+
+### /content/getArticles
+
+> 给用户生成一个推荐文章列表；如果用户已有关注的源则从源获取新文章，否则获取一些默认文章
+
+- 输入：
+
+  ```json
+  {
+      'userid': 'be19d186-3e9f-11eb-a877-00163e0f2f21'  //登录时返回的用户id，格式类似示例
+  }
+  ```
+
+- 输出：
+
+  ```json
+  {
+      'state':'success',
+      'article_list':{
+          '0':{
+              'title': '文章名',
+              'article': '文章正文',
+              'id': 'a7ae6a6b-c1d7-48b6-8914-6054dfd3ac3c', //文章id，格式类似示例
+              'keyword_num':20,
+              'keyword_list':{
+                  '0': '关键词1',
+                  '1': '关键词2',
+                  //...中间略
+               	'19': '关键词20'
+              }
+          },
+          '1':{
+              'title': '文章名2',
+              'article': '文章正文2',
+              'id': 'id2', 
+              'keyword_num':20,
+              'keyword_list':{
+                  '0': '关键词a',
+                  '1': '关键词b',
+                  //...中间略
+               	'19': '关键词t'
+          },
+      }
+          //后略
+  }
+  ```
 
 
 
+### /content/search
 
+> 用于关键词搜索文章；支持多关键词用空格分隔。
 
+- 输入：
 
+  ```json
+  {
+      'searchword': '我 爱 软件' //准备搜索的关键词
+  }
+  ```
+
+  
+
+- 输出：
+
+  ```json
+  
+  ```
+
+  
+
+### /content/getArticleById
+
+> 用于通过文章id获得单篇文章内容
+
+- 输入
+
+  ```json
+  {
+  	'articleid': '文章id'	
+  }
+  ```
+
+  
+
+- 输出
+
+  ```json
+  {
+      'title': '文章标题',
+      'content': '文章内容',
+      'keywords':{
+          '0': '关键词1',
+          '1': '关键词2',
+          //...
+      }
+  }
+  ```
+
+  
