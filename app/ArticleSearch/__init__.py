@@ -1,8 +1,9 @@
 from elasticsearch import Elasticsearch
 import json
 
+
 class NewsElasticEngine():
-    def __init__(self, hosts=["49.234.217.176:9200"], index_name="news", doc_type="news"):
+    def __init__(self, hosts=["49.234.217.176:9200"], index_name="news", doc_type="news", initialize=False):
         self.es = Elasticsearch(hosts)
         self.hosts = hosts
         self.index_name = index_name
@@ -21,6 +22,9 @@ class NewsElasticEngine():
                 }
             }
         }
+        if initialize is True:
+            self.rebuild_database(self.index_name,self.doc_type)
+        
 
     def rebuild_database(self, index_name, doc_type):
         self.es.indices.delete(index=index_name, ignore=[400, 404])
@@ -43,5 +47,6 @@ class NewsElasticEngine():
                 }
             }
         }
-        result = self.es.search(index=self.index_name, doc_type=self.doc_type, body=dsl)
+        result = self.es.search(index=self.index_name,
+                                doc_type=self.doc_type, body=dsl)
         return (json.dumps(result, indent=2, ensure_ascii=False))
