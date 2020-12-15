@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,g
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from app.ArticleSearch import NewsElasticEngine

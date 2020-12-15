@@ -1,5 +1,5 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
-from app import app,auth
+from app import app,auth,g
 from app.tables import UserInfo
 from flask import jsonify
 
@@ -22,5 +22,6 @@ def verify_auth_token(token, password):  # 注意只能两个参数
         return False
     except BadSignature:
         return False
+    g.UserId=list(data.keys())[0]
     return True
  
