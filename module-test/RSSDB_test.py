@@ -38,11 +38,12 @@ class RSSDBTestCase(unittest.TestCase):
         for e in RSSDBTestCase.rsshub_list:
             data = {'rsslink':e[1],'rsstitle':e[0]}
             response = self.client.post("/rssdb/addKnownRSS",data = data)
-            response = json.load(response.data)
+            print(response.data)
+            response = json.loads(response.data)
             self.assertDictContainsSubset({"state":"success"}, response)
     def test_2_getAllRSS(self):
         response = self.client.post("/rssdb/getAllRSS")
-        response = json.load(response.data)
+        response = json.loads(response.data)
         self.assertDictContainsSubset({"state":"success"}, response)
         allRSS_len = len(response['rst'])
         self.assertEqual(len(RSSDBTestCase.rsshub_list), allRSS_len)
@@ -52,17 +53,17 @@ class RSSDBTestCase(unittest.TestCase):
         for e in RSSDBTestCase.rsshub_list:
             data = {'userId':'test_user1','rsslink':e[1],'rsstitle':e[0]}
             response = self.client.post("/rssdb/addPendingMsg",data = data)
-            response = json.load(response.data)
+            response = json.loads(response.data)
             self.assertDictContainsSubset({'state': 'failed'}, response)
         for e in RSSDBTestCase.pendingMsg:
             data = {'userId':'test_user1','rsslink':e[1],'rsstitle':e[0]}
             response = self.client.post("/rssdb/addPendingMsg",data = data)
-            response = json.load(response.data)
+            response = json.loads(response.data)
             self.assertDictContainsSubset({'state': 'success'}, response)
 
     def test_4_handlePendingMsg(self):
         response = self.client.post("/rssdb/getPendingMsg")
-        pending_response = json.load(response.data)
+        pending_response = json.loads(response.data)
         self.assertDictContainsSubset({"state":"success"}, pending_response)
         pendingMsg_len = len(pending_response['rst'])
         self.assertEqual(len(RSSDBTestCase.pendingMsg),pendingMsg_len)
@@ -70,13 +71,13 @@ class RSSDBTestCase(unittest.TestCase):
         # 同意第一个请求
         approve_id = pending_response['rst'][0]['_Id']
         data = {'administratorId':RSSDBTestCase.administrator_name,'pendingMsg_id':approve_id}
-        response = self.client.post("/rssdb/approvePendingMsg")
-        response = json.load(response.data)
+        response = self.client.post("/rssdb/approvePendingMsg",data = data)
+        response = json.loads(response.data)
         self.assertDictContainsSubset({'state': 'success'}, response)
 
         # 再次查看所有RSS，数量应该+1
         response = self.client.post("/rssdb/getAllRSS")
-        response = json.load(response.data)
+        response = json.loads(response.data)
         self.assertDictContainsSubset({"state":"success"}, response)
         allRSS_len = len(response['rst'])
         self.assertEqual(len(RSSDBTestCase.rsshub_list) + 1, allRSS_len)
@@ -84,13 +85,13 @@ class RSSDBTestCase(unittest.TestCase):
         
         # 拒绝第二个请求
         reject_id = pending_response['rst'][1]['_Id']
-        data = {'administratorId':RSSDBTestCase.administrator_name,'pendingMsg_id':approve_id}
-        response = self.client.post("/rssdb/rejectPendingMsg")
-        response = json.load(response.data)
+        data = {'administratorId':RSSDBTestCase.administrator_name,'pendingMsg_id':reject_id}
+        response = self.client.post("/rssdb/rejectPendingMsg",data=data)
+        response = json.loads(response.data)
         self.assertDictContainsSubset({'state': 'success'}, response)
 
         response = self.client.post("/rssdb/getAllRSS")
-        response = json.load(response.data)
+        response = json.loads(response.data)
         self.assertDictContainsSubset({"state":"success"}, response)
         allRSS_len = len(response['rst'])
         self.assertEqual(len(RSSDBTestCase.rsshub_list) + 1, allRSS_len)
@@ -98,7 +99,7 @@ class RSSDBTestCase(unittest.TestCase):
     def test_5_getPendingMsg(self):
         # 处理完所有之后应该为0
         response = self.client.post("/rssdb/getPendingMsg")
-        pending_response = json.load(response.data)
+        pending_response = json.loads(response.data)
         self.assertDictContainsSubset({"state":"success"}, pending_response)
         pendingMsg_len = len(pending_response['rst'])
         self.assertEqual(0,pendingMsg_len)
