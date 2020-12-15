@@ -202,6 +202,28 @@ def userGetFavorRSS_links(userId):
     except Exception as e:
         return jsonify({'state':'failed', "description": str(e.args[0])})
 
+# 返回对象
+def userGetFavorRSS_links_obj(userId):
+    try:
+        result = FavorRSS.query.filter_by(userId=userId).all()
+    except Exception as e:
+        return {'state': 'failed', "description": "first query failed with error: " + str(e.args[0])}
+    rst = classlist2dictlist(result)
+    try:
+        allrss_rst = KnownRSS.query.all()
+        allrss_rst = classlist2dictlist(allrss_rst)
+    except Exception as e:
+        return {'state': 'failed', "description": str(e.args[0])}
+
+    try:
+        all_rss = allrss_rst
+        rssid2rsslink = {e['rssId']: e['rsslink'] for e in all_rss}
+        rssid2rsstitle = {e['rssId']: e['rsstitle'] for e in all_rss}
+        rst = [{'_Id': e['_Id'], 'userId': e['userId'], 'rsslink': rssid2rsslink[e['rssId']],
+                'rsstitle': rssid2rsstitle[e['rssId']]} for e in rst]
+        return {'state': 'success', "rst": rst}
+    except Exception as e:
+        return {'state': 'failed', "description": str(e.args[0])}
 
 # 用户移除一个RSS订阅
 def userRemoveFavorRSS(userId, RSSId):
