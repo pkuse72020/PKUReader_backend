@@ -48,7 +48,7 @@ class FavorArticle(db.Model):
     _Id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.String(100), nullable=False)
     # Password = db.Column(db.String(20), nullable=True)
-    articleId = db.Column(db.Integer, nullable=False)
+    articleId = db.Column(db.String(100))
 
     def __init__(self, userId, articleId):
         self.userId = userId
@@ -160,7 +160,7 @@ def getArticleByID(articleid, other_info = {}):
         'content': cur_article.ArticleContent,
         'keywords': keywordlist,
         '_Id':_Id,
-        'userId',userId,
+        'userId':userId,
         'articleId':articleid
     }
 
@@ -171,7 +171,7 @@ def userGetFavorArticles(userId):
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     rst = classlist2dictlist(result)
 
-    article_contents = [getArticleByID(e['articleId']) for e in rst]
+    article_contents = [getArticleByID(e['articleId'],e) for e in rst]
 
     return jsonify({'state':'success', "rst":article_contents})
     # return [{'_Id':e._Id,'userId':e.userId, "articleId":e.articleId} for e in result]
