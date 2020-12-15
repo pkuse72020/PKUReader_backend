@@ -66,37 +66,48 @@ def get_articles():
             cur_summary = html2txt(e.summary)
             article = Article(cur_title, cur_summary)
             #print(e.title)
-            try:
-                db.session.add(article)
-                db.session.commit()
-            except Exception as e:
-                db.session.rollback()
-                return jsonify({'state':'failed', 'description':e.args[0]})
-            #把文章关键词找出来
-            text = cur_summary
-            keywordList = getKeywords(text)
-            #print(keywordList)
-            #关键词入库
-            try:
-                cur_article = Article.query.filter_by(ArticleTitle=cur_title).all()[0]
-            except Exception as e:
-                return jsonify({'state':'failed', 'description': 'Save article error.'})
-            for word in keywordList:
-                cur_a2k = Article2Keyword(cur_article.ArticleId, word)
+            findarticle = Article.query.filter_by(ArticleTitle=cur_title).all()
+            if len(findarticle) != 0:
+                cur_article = findarticle[0]
+                articleid = cur_article.ArticleId
+                keywordList = Article2Keyword.query.filter_by(ArticleId=articleid).all()
+                keywordList = [x.Keyword for x in keywordList]
+                keyword_dict = dict(zip(range(len(keywordList)), keywordList))
+                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
+                            'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                article_list.append(newsdata)
+            else:
                 try:
-                    db.session.add(cur_a2k)
+                    db.session.add(article)
                     db.session.commit()
                 except Exception as e:
                     db.session.rollback()
-                    return jsonify({'state':'failed', 'description': e.args[0]})
-            keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-            newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
-                        'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
-            es.insert_data(newsdata)
-            article_list.append(newsdata)
-            index = range(len(article_list))
-            article_dict = dict(zip(index, article_list))
-    return jsonify({'state': 'success', 'article_list': article_list})
+                    return jsonify({'state':'failed', 'description':e.args[0]})
+                #把文章关键词找出来
+                text = cur_summary
+                keywordList = getKeywords(text)
+                #print(keywordList)
+                #关键词入库
+                try:
+                    cur_article = Article.query.filter_by(ArticleTitle=cur_title).all()[0]
+                except Exception as e:
+                    return jsonify({'state':'failed', 'description': 'Save article error.'})
+                for word in keywordList:
+                    cur_a2k = Article2Keyword(cur_article.ArticleId, word)
+                    try:
+                        db.session.add(cur_a2k)
+                        db.session.commit()
+                    except Exception as e:
+                        db.session.rollback()
+                        return jsonify({'state':'failed', 'description': e.args[0]})
+                keyword_dict = dict(zip(range(len(keywordList)), keywordList))
+                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
+                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                es.insert_data(newsdata)
+                article_list.append(newsdata)
+    index = range(len(article_list))
+    article_dict = dict(zip(index, article_list))
+    return jsonify({'state': 'success', 'article_list': article_dict})
 
 @Content.route('/search', methods=["POST", "GET"])
 def search():
@@ -137,7 +148,8 @@ def get_article_by_id():
     return jsonify({
         'title': cur_article.ArticleTitle,
         'content': cur_article.ArticleContent,
-        'keywords': keywordlist
+        'keywords': keywordlist,
+        'state': 'success'
     })
 
 @Content.route('/getallarticle', methods=["POST", "GET"])

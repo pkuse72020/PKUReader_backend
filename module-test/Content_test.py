@@ -1,0 +1,65 @@
+import unittest
+from app import app, db
+import json
+import base64
+
+class ContentTestCase(unittest.TestCase):
+    def setUp(self):
+        app.testing = True
+        self.client = app.test_client()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_articles(self):
+        #添加一个用户
+        data = {'username': 'yzy', 'password': 'yzyzyyzy'}
+        response = self.client.post("/user/signup", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+        userid = response['UserId']
+        #给用户添加一个RSS
+        data = {'userId': userid,
+                'RSSId': '1'}
+        response = self.client.post("/rssdb/addFavorRSS", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+        #生成文章列表
+        data = {'userid': userid}
+        response = self.client.post("/content/getArticles", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+
+    def test_search(self):
+        data = {'searchword': "北京"}
+        response = self.client.post("/content/search", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+
+    def test_get_article_by_id(self):
+        # 添加一个用户
+        data = {'username': 'lyzy', 'password': 'lyzylzylyzy'}
+        response = self.client.post("/user/signup", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+        userid = response['UserId']
+        # 给用户添加一个RSS
+        data = {'userId': userid,
+                'RSSId': '1'}
+        response = self.client.post("/rssdb/addFavorRSS", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+        # 生成文章列表
+        data = {'userid': userid}
+        response = self.client.post("/content/getArticles", data=data)
+        response = json.loads(response.data)
+        articleid = response['article_list']['0']['id']
+        self.assertDictContainsSubset({"state": "success"}, response)
+        data = {'articleid':articleid}
+        response = self.client.post("/content/getArticleById", data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+
+
