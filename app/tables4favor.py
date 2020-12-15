@@ -4,6 +4,7 @@ from app import db
 import uuid
 
 import app
+from app.tables import *
 
 '''
 created by zkc
@@ -47,7 +48,7 @@ class FavorArticle(db.Model):
     _Id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.String(100), nullable=False)
     # Password = db.Column(db.String(20), nullable=True)
-    articleId = db.Column(db.Integer, nullable=False)
+    articleId = db.Column(db.String(100))
 
     def __init__(self, userId, articleId):
         self.userId = userId
@@ -123,14 +124,58 @@ def userAddFavorArticle(userId, articleId):
     else:
         return jsonify({"state":'success', "description": "success", "moreMsg":classlist2dictlist(result)})
 
-# 用户获得所有收藏的文章
-def userGetFavorArticles(userId):
+# 用户获得所有收藏的文章id
+def userGetFavorArticles_id(userId):
     try:
         result = FavorArticle.query.filter_by(userId = userId).all()
     except Exception as e:
         return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
     return jsonify({'state':'success', "rst":classlist2dictlist(result)})
     # return [{'_Id':e._Id,'userId':e.userId, "articleId":e.articleId} for e in result]
+
+
+def getArticleByID(articleid, other_info = {}):
+    try:
+        article_rst = Article.query.filter_by(ArticleId=articleid).all()
+    except Exception as e:
+        return None
+    if len(article_rst) == 0:
+        return None
+    cur_article = article_rst[0]
+
+    keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
+    keywordlist = [x.Keyword for x in keywordlist]
+    keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
+    
+    _Id = 1
+    userId = "test_user"
+
+    if '_Id' in other_info:
+        _Id = other_info['_Id']
+    if 'userId' in other_info:
+        userId = other_info['userId']
+
+    return {
+        'title': cur_article.ArticleTitle,
+        'content': cur_article.ArticleContent,
+        'keywords': keywordlist,
+        '_Id':_Id,
+        'userId':userId,
+        'articleId':articleid
+    }
+
+def userGetFavorArticles(userId):
+    try:
+        result = FavorArticle.query.filter_by(userId = userId).all()
+    except Exception as e:
+        return jsonify({'state':'failed', "description": "first query failed with error: " + str(e.args[0])})
+    rst = classlist2dictlist(result)
+
+    article_contents = [getArticleByID(e['articleId'],e) for e in rst]
+
+    return jsonify({'state':'success', "rst":article_contents})
+    # return [{'_Id':e._Id,'userId':e.userId, "articleId":e.articleId} for e in result]
+
 
 # 用户移除一篇收藏的文章
 def userRemoveFavorArticle(userId, articleId):
@@ -197,7 +242,7 @@ def userGetFavorRSS_links(userId):
         all_rss = allrss_rst
         rssid2rsslink = {e['rssId']:e['rsslink'] for e in all_rss}
         rssid2rsstitle = {e['rssId']:e['rsstitle'] for e in all_rss}
-        rst = [{'_Id':e['_Id'], 'userId':e['userId'], 'rsslink':rssid2rsslink[e['rssId']],'rsstitle':rssid2rsstitle[e['rssId']]} for e in rst]
+        rst = [{'_Id':e['_Id'], 'userId':e['userId'], 'rsslink':rssid2rsslink[e['rssId']],'rsstitle':rssid2rsstitle[e['rssId']], 'rssId':e['rssId']} for e in rst]
         return jsonify({'state':'success', "rst":rst})
     except Exception as e:
         return jsonify({'state':'failed', "description": str(e.args[0])})

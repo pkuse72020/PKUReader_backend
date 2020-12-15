@@ -10,7 +10,8 @@ app = Flask(__name__)
 app.config['TOKEN_EXPIRATION'] = 30 * 24 * 3600
 app.config['SECRET_KEY'] = 'k#6@1%8)a'
 # 连接数据库
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////database.db'
+# 修改数据库地址为相对地址，更安全
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
 # 设置是否跟踪数据库的修改情况，一般不跟踪
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
