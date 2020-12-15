@@ -39,7 +39,7 @@ def get_articles():
     try:
         #userfocuslink = UserInfo.query.filter_by(UserId=userid).all()
         userfocuslink = userGetFavorRSS_links_obj(userid)
-        print(userfocuslink)
+        #print(userfocuslink)
     except Exception as e:
         return jsonify({"state": "failed", "description": e.args[0] +e.args[1] +  " get favorrss error. "})
 
@@ -66,21 +66,34 @@ def get_articles():
             cur_summary = html2txt(e.summary)
             article = Article(cur_title, cur_summary)
             #print(e.title)
-            db.session.add(article)
+            try:
+                db.session.add(article)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'state':'failed', 'description':e.args[0]})
             #把文章关键词找出来
             text = cur_summary
             keywordList = getKeywords(text)
+            #print(keywordList)
             #关键词入库
-            cur_article = Article.query.filter_by(ArticleTitle=e.title).all()[0]
-            #TODO 需要检查
+            try:
+                cur_article = Article.query.filter_by(ArticleTitle=cur_title).all()[0]
+            except Exception as e:
+                return jsonify({'state':'failed', 'description': 'Save article error.'})
             for word in keywordList:
                 cur_a2k = Article2Keyword(cur_article.ArticleId, word)
-                db.session.add(cur_a2k)
-
+                try:
+                    db.session.add(cur_a2k)
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({'state':'failed', 'description': e.args[0]})
+            keyword_dict = dict(zip(range(len(keywordList)), keywordList))
             newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
-                        'id':cur_article.ArticleId}
+                        'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
             es.insert_data(newsdata)
-            article_list.append(newsdata) #TODO wiki内容
+            article_list.append(newsdata)
             index = range(len(article_list))
             article_dict = dict(zip(index, article_list))
     return jsonify({'state': 'success', 'article_list': article_list})
@@ -98,3 +111,45 @@ def search():
         searchword = request.form.get("searchword")
 
     return jsonify({'state': 'success', 'result': es.search_news(searchword)})
+
+@Content.route('/getArticleById', methods=["POST", "GET"])
+def get_article_by_id():
+    '''
+    传入articleid
+    :return: Article
+    '''
+    if request.method == "GET":
+        articleid = request.args.get("articleid")
+    else:
+        articleid = request.form.get("articleid")
+
+    try:
+        article_rst = Article.query.filter_by(ArticleId=articleid).all()
+    except Exception as e:
+        return jsonify({'state':'failed', 'description':'Find Article error'})
+    if len(article_rst) == 0:
+        return jsonify({'state':'failed', 'description': 'Find No Article.'})
+    cur_article = article_rst[0]
+
+    keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
+    keywordlist = [x.Keyword for x in keywordlist]
+    keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
+    return jsonify({
+        'title': cur_article.ArticleTitle,
+        'content': cur_article.ArticleContent,
+        'keywords': keywordlist
+    })
+
+@Content.route('/getallarticle', methods=["POST", "GET"])
+def get_all_article():  #仅供测试
+    '''
+    传入articleid
+    :return: Article
+    '''
+    articlelist = Article.query.all()
+    print('debug all article')
+    for i, item in enumerate(articlelist):
+        print(item.ArticleId)
+        print(item.ArticleTitle)
+        print(item.ArticleContent)
+
