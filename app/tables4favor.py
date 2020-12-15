@@ -207,13 +207,13 @@ def userGetFavorRSS_links_obj(userId):
     try:
         result = FavorRSS.query.filter_by(userId=userId).all()
     except Exception as e:
-        return jsonify({'state': 'failed', "description": "first query failed with error: " + str(e.args[0])})
+        return {'state': 'failed', "description": "first query failed with error: " + str(e.args[0])}
     rst = classlist2dictlist(result)
     try:
         allrss_rst = KnownRSS.query.all()
-        #allrss_rst = classlist2dictlist(allrss_rst)
+        allrss_rst = classlist2dictlist(allrss_rst)
     except Exception as e:
-        return jsonify({'state': 'failed', "description": str(e.args[0])})
+        return {'state': 'failed', "description": str(e.args[0])}
 
     try:
         all_rss = allrss_rst

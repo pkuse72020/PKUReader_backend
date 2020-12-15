@@ -72,4 +72,4 @@ def login():
 @UserManagement.route('/token_test', methods=["GET", "POST"])
 @auth.login_required
 def token_test():
-    return "token success"
+    return jsonify({"state":"success"})

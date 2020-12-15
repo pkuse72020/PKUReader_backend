@@ -1,0 +1,222 @@
+2020-12-14 15:40:44,292 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
+202-012-14 15:40:44,295 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,296 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
+2020-12-14 15:40:44,296 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,297 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("UserInfo")
+2020-12-14 15:40:44,297 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,299 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FocusArticle")
+2020-12-14 15:40:44,299 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FocusFeed")
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("Article")
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("Article2Keyword")
+2020-12-14 15:40:44,300 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("KnownRSS")
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FavorRSS")
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FavorArticle")
+2020-12-14 15:40:44,301 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,302 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("pendingMsg")
+2020-12-14 15:40:44,302 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,302 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "Article2Keyword"
+2020-12-14 15:40:44,302 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,316 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,316 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "FocusFeed"
+2020-12-14 15:40:44,316 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,327 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,327 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "FocusArticle"
+2020-12-14 15:40:44,328 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,347 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,347 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "pendingMsg"
+2020-12-14 15:40:44,347 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,358 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,358 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "FavorArticle"
+2020-12-14 15:40:44,359 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,367 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,368 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "FavorRSS"
+2020-12-14 15:40:44,368 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,379 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,379 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "KnownRSS"
+2020-12-14 15:40:44,380 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,390 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,391 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "Article"
+2020-12-14 15:40:44,391 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,404 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,404 INFO sqlalchemy.engine.base.Engine 
+DROP TABLE "UserInfo"
+2020-12-14 15:40:44,404 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,411 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,411 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("UserInfo")
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("UserInfo")
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FocusArticle")
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("FocusArticle")
+2020-12-14 15:40:44,412 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FocusFeed")
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("FocusFeed")
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("Article")
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("Article")
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("Article2Keyword")
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,413 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("Article2Keyword")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("KnownRSS")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("KnownRSS")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FavorRSS")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("FavorRSS")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("FavorArticle")
+2020-12-14 15:40:44,414 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("FavorArticle")
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine PRAGMA main.table_info("pendingMsg")
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine PRAGMA temp.table_info("pendingMsg")
+2020-12-14 15:40:44,415 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,416 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "UserInfo" (
+	"UserId" VARCHAR(100) NOT NULL, 
+	"Username" VARCHAR(20) NOT NULL, 
+	"Password_hash" VARCHAR(100) NOT NULL, 
+	PRIMARY KEY ("UserId"), 
+	UNIQUE ("UserId"), 
+	UNIQUE ("Username")
+)
+
+
+2020-12-14 15:40:44,416 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,420 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,421 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "Article" (
+	"ArticleId" VARCHAR(100) NOT NULL, 
+	"ArticleTitle" VARCHAR(100) NOT NULL, 
+	"ArticleContent" VARCHAR(10000), 
+	PRIMARY KEY ("ArticleId"), 
+	UNIQUE ("ArticleId"), 
+	UNIQUE ("ArticleTitle")
+)
+
+
+2020-12-14 15:40:44,421 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,430 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,430 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "KnownRSS" (
+	"rssId" INTEGER NOT NULL, 
+	rsslink VARCHAR(100) NOT NULL, 
+	rsstitle VARCHAR(100) NOT NULL, 
+	PRIMARY KEY ("rssId"), 
+	UNIQUE (rsslink)
+)
+
+
+2020-12-14 15:40:44,430 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,441 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,442 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "FavorRSS" (
+	"_Id" INTEGER NOT NULL, 
+	"userId" VARCHAR(100) NOT NULL, 
+	"rssId" INTEGER NOT NULL, 
+	PRIMARY KEY ("_Id")
+)
+
+
+2020-12-14 15:40:44,442 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,449 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,450 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "FavorArticle" (
+	"_Id" INTEGER NOT NULL, 
+	"userId" VARCHAR(100) NOT NULL, 
+	"articleId" INTEGER NOT NULL, 
+	PRIMARY KEY ("_Id")
+)
+
+
+2020-12-14 15:40:44,450 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,458 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,458 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "pendingMsg" (
+	"_Id" INTEGER NOT NULL, 
+	"userId" VARCHAR(100) NOT NULL, 
+	rsstitle VARCHAR(100) NOT NULL, 
+	rsslink VARCHAR(100) NOT NULL, 
+	"checkedByAdministrator" VARCHAR(100), 
+	PRIMARY KEY ("_Id")
+)
+
+
+2020-12-14 15:40:44,459 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,465 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,465 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "FocusArticle" (
+	"FAId" VARCHAR(100) NOT NULL, 
+	"UserId" VARCHAR(100), 
+	"ArticleId" VARCHAR(100), 
+	PRIMARY KEY ("FAId"), 
+	UNIQUE ("FAId"), 
+	FOREIGN KEY("UserId") REFERENCES "UserInfo" ("UserId")
+)
+
+
+2020-12-14 15:40:44,465 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,471 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,472 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "FocusFeed" (
+	"FFId" VARCHAR(100) NOT NULL, 
+	"UserId" VARCHAR(100), 
+	"RSSTitle" VARCHAR(100), 
+	"RSSurl" VARCHAR(200), 
+	PRIMARY KEY ("FFId"), 
+	UNIQUE ("FFId"), 
+	FOREIGN KEY("UserId") REFERENCES "UserInfo" ("UserId")
+)
+
+
+2020-12-14 15:40:44,472 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,477 INFO sqlalchemy.engine.base.Engine COMMIT
+2020-12-14 15:40:44,478 INFO sqlalchemy.engine.base.Engine 
+CREATE TABLE "Article2Keyword" (
+	"A2Kid" VARCHAR(100) NOT NULL, 
+	"ArticleId" VARCHAR(100), 
+	"Keyword" VARCHAR(100), 
+	PRIMARY KEY ("A2Kid"), 
+	UNIQUE ("A2Kid"), 
+	FOREIGN KEY("ArticleId") REFERENCES "Article" ("ArticleId")
+)
+
+
+2020-12-14 15:40:44,478 INFO sqlalchemy.engine.base.Engine ()
+2020-12-14 15:40:44,484 INFO sqlalchemy.engine.base.Engine COMMIT
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+/usr/local/lib/python3.6/dist-packages/requests/__init__.py:91: RequestsDependencyWarning: urllib3 (1.26.2) or chardet (3.0.4) doesn't match a supported version!
+  RequestsDependencyWarning)
+Traceback (most recent call last):
+  File "run.py", line 9, in <module>
+    app.run(host='0.0.0.0', debug=True, port = 8000)
+  File "/home/se_gp7/.local/lib/python3.6/site-packages/flask/app.py", line 990, in run
+    run_simple(host, port, self, **options)
+  File "/home/se_gp7/.local/lib/python3.6/site-packages/werkzeug/serving.py", line 1030, in run_simple
+    s.bind(server_address)
+OSError: [Errno 98] Address already in use

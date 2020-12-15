@@ -17,43 +17,45 @@ def get_articles():
     传入用户名；
     返回推送给用户的文章列表；
     给文章生成关键词，并放入数据库；
-    把关键词的wiki内容抽出；
+    把关键词的wiki内容抽出
     '''
     if request.method == "GET":
-        username = request.args.get("username")
+        userid = request.args.get("userid")
     else:
-        username = request.form.get("username")
+        userid = request.form.get("userid")
     #根据username找userid
     try:
-        userlist = UserInfo.query.filter_by(Username=username).all()
+        userlist = UserInfo.query.filter_by(UserId=userid).all()
     except Exception as e:
-        return jsonify({"state": "failed", "description": e.args[0] + "fail to find user!"})
+        return jsonify({"state": "failed", "description": e.args[0] + " find user error."})
     if (len(userlist) == 0):
-        return jsonify({"state": "failed", "description": "No such user!"})
+        return jsonify({"state": "failed", "description": "No such user."})
     if (len(userlist) != 1):
         return jsonify({"state": "failed", "description": "There are multiple lines in database with the same Username."})
     user = userlist[0]
-    userid = user.UserId
 
-    #根据userid找关注
+    #根据userid找关
+    rsslist = []
     try:
         #userfocuslink = UserInfo.query.filter_by(UserId=userid).all()
         userfocuslink = userGetFavorRSS_links_obj(userid)
-        if userfocuslink['rst'] != None:
-            rsslist = [e['rsslink'] for e in userfocuslink['rst']]
-        else:
-            return jsonify({"state": "failed", "description": "get favor error"})
-    #rst = [{'_Id': e['_Id'], 'userId': e['userId'], 'rsslink': rssid2rsslink[e['rssId']],
-    #        'rsstitle': rssid2rsstitle[e['rssId']]} for e in rst]
+        print(userfocuslink)
     except Exception as e:
-        return jsonify({"state": "failed", "description": e.args[0] + " fail to find rss"})
+        return jsonify({"state": "failed", "description": e.args[0] +e.args[1] +  " get favorrss error. "})
+
+    try:
+        if userfocuslink['rst'] != None:
+            rsslist = [x['rsslink'] for x in userfocuslink['rst']]
+        else:
+            return jsonify({"state": "failed", "description": "Find no favor RSS"})
+    except Exception as e:
+        return jsonify({"state": "failed", "description": "Find no favor RSS"})
 
     article_list = []
 
     if (len(rsslist) == 0):
-        rsslist = ["https://rsshub.app/allpoetry/newest", "https://rsshub.app/wenku8/chapter/74"]
+        rsslist = ["https://rss.shab.fun/cctv/tech"] #default
 
-    #print("rsslist is: ", len(rsslist))
     for rssfeed in rsslist:
         entries = feedparser.parse(rssfeed).entries
         if len(entries) > 5:
