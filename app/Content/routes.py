@@ -121,7 +121,18 @@ def search():
     else:
         searchword = request.form.get("searchword")
 
-    return jsonify({'state': 'success', 'result': es.search_news(searchword)})
+    try:
+        res = es.search_news(searchword)
+        res = json.loads(res)
+        article_list = []
+        for item in res['hits']['hits']:
+            article_list.append(item["_source"])
+        article_dict = dict(zip(range(len(article_list)), article_list))
+    except Exception as e:
+        return jsonify({'state':'failed',
+                        'description': 'Search Error.'})
+    return jsonify({'state': 'success', 'result': article_dict})
+
 
 @Content.route('/getArticleById', methods=["POST", "GET"])
 def get_article_by_id():
@@ -147,7 +158,7 @@ def get_article_by_id():
     keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
     return jsonify({
         'title': cur_article.ArticleTitle,
-        'content': cur_article.ArticleContent,
+        'article ': cur_article.ArticleContent,
         'keywords': keywordlist,
         'state': 'success'
     })
