@@ -20,10 +20,18 @@ class ContentTestCase(unittest.TestCase):
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         userid = response['UserId']
+        #添加一个RSS
+        data = {'rsslink':'http://39.98.93.128:5001/cctv/tech',
+                'rsstitle': 'cctvtech'}
+        response = self.client.post("/rssdb/addKnownRSS", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state":"success"}, response)
+        rssid = str(response['moreMsg'][0]['rssId'])
         #给用户添加一个RSS
         data = {'userId': userid,
-                'RSSId': '1'}
-        response = self.client.post("/rssdb/addFavorRSS", data=data)
+                'RSSId': rssid}
+        response = self.client.post("/userfavor/addFavorRSS", data=data)
+        print(response)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         #生成文章列表
@@ -45,10 +53,17 @@ class ContentTestCase(unittest.TestCase):
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         userid = response['UserId']
+        # 添加一个RSS
+        data = {'rsslink': 'http://39.98.93.128:5001/cctv/tech',
+                'rsstitle': 'cctvtech'}
+        response = self.client.post("/rssdb/addKnownRSS", data=data)
+        response = json.loads(response.data)
+        self.assertDictContainsSubset({"state": "success"}, response)
+        rssid = str(response['moreMsg'][0]['rssId'])
         # 给用户添加一个RSS
         data = {'userId': userid,
-                'RSSId': '1'}
-        response = self.client.post("/rssdb/addFavorRSS", data=data)
+                'RSSId': rssid}
+        response = self.client.post("/userfavor/addFavorRSS", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         # 生成文章列表
@@ -58,7 +73,7 @@ class ContentTestCase(unittest.TestCase):
         articleid = response['article_list']['0']['id']
         self.assertDictContainsSubset({"state": "success"}, response)
         data = {'articleid':articleid}
-        response = self.client.post("/content/getArticleById", data)
+        response = self.client.post("/content/getArticleById", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
 

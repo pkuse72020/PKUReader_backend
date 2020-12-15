@@ -1,8 +1,8 @@
 test_articleInsert (ArticleSearch_test.ArticleSearchTestCase) ... ok
 test_articleInsertandSearch (ArticleSearch_test.ArticleSearchTestCase) ... ok
 test_rebuilddatabase (ArticleSearch_test.ArticleSearchTestCase) ... ok
-test_get_article_by_id (Content_test.ContentTestCase) ... ERROR
-test_get_articles (Content_test.ContentTestCase) ... ERROR
+test_get_article_by_id (Content_test.ContentTestCase) ... ok
+test_get_articles (Content_test.ContentTestCase) ... ok
 test_search (Content_test.ContentTestCase) ... ok
 test_1_addAndRemoveRSS (RSSDB_test.RSSDBTestCase) ... ok
 test_2_getAllRSS (RSSDB_test.RSSDBTestCase) ... ok
@@ -16,35 +16,7 @@ test_1_addAndRemoveRSS (userFavor_test.UserFavorTestCase) ... ok
 test_2_addRSS (userFavor_test.UserFavorTestCase) ... ok
 test_3_addAndRemoveArticle (userFavor_test.UserFavorTestCase) ... ok
 
-======================================================================
-ERROR: test_get_article_by_id (Content_test.ContentTestCase)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/se_gp7/test_code/PKUReader_backend/module-test/Content_test.py", line 52, in test_get_article_by_id
-    response = json.loads(response.data)
-  File "/usr/lib/python3.6/json/__init__.py", line 354, in loads
-    return _default_decoder.decode(s)
-  File "/usr/lib/python3.6/json/decoder.py", line 339, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-  File "/usr/lib/python3.6/json/decoder.py", line 357, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+Ran 17 tests in 15.152s
 
-======================================================================
-ERROR: test_get_articles (Content_test.ContentTestCase)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/se_gp7/test_code/PKUReader_backend/module-test/Content_test.py", line 27, in test_get_articles
-    response = json.loads(response.data)
-  File "/usr/lib/python3.6/json/__init__.py", line 354, in loads
-    return _default_decoder.decode(s)
-  File "/usr/lib/python3.6/json/decoder.py", line 339, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-  File "/usr/lib/python3.6/json/decoder.py", line 357, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
-
-----------------------------------------------------------------------
-Ran 17 tests in 8.314s
-
-FAILED (errors=2)
+OK
