@@ -769,9 +769,35 @@ def example():
 - 输出：
 
   ```json
-  
+  {
+      'state': 'success',
+    'result': {
+          '0': {
+              'article': '文章内容',
+              'title': '文章标题',
+              'id': '文章id',
+              'keyword_num': 20,
+              'keyword_list':{
+                  '0': '关键词1',
+                  '1': //...
+                  //...
+                  
+              }
+          },
+          '1':{
+              //...与上面格式相同
+          },
+          //...
+      }
+  }
+      
+  //失败时：
+  {
+      'state': 'failed',
+      'description': '....'
+  }
   ```
-
+  
   
 
 ### /content/getArticleById
