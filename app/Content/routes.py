@@ -11,6 +11,11 @@ from app.tables import *
 from app.tables4favor import *
 from NLProcess.tools import html2txt, html2txt_yzy, tokenizer, getEachPOS, getKeywords
 
+def showenter(text):
+    ret = text.replace("<br>", '\n')
+    ret = ret.replace("<p></p>", '\n')
+    return ret
+
 @Content.route('/getArticles', methods=["POST", "GET"])
 def get_articles():
     '''
@@ -74,7 +79,10 @@ def get_articles():
                 keywordList = Article2Keyword.query.filter_by(ArticleId=articleid).all()
                 keywordList = [x.Keyword for x in keywordList]
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
+                raw_content = cur_article.ArticleContent
+                raw_content = showenter(raw_content)
+                show_content = html2txt_yzy(raw_content)
+                newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
                             'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
                 article_list.append(newsdata)
             else:
@@ -102,7 +110,10 @@ def get_articles():
                         db.session.rollback()
                         return jsonify({'state':'failed', 'description': e.args[0]})
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-                newsdata = {'title': cur_article.ArticleTitle, 'article': html2txt_yzy(cur_article.ArticleContent),
+                raw_content = cur_article.ArticleContent
+                raw_content = showenter(raw_content)
+                show_content = html2txt_yzy(raw_content)
+                newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
                             'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
                 es.insert_data(newsdata)
                 article_list.append(newsdata)
