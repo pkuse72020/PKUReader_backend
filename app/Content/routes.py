@@ -9,7 +9,7 @@ def hello_world():
 from app import db, es
 from app.tables import *
 from app.tables4favor import *
-from NLProcess.tools import html2txt, tokenizer, getEachPOS, getKeywords
+from NLProcess.tools import html2txt, html2txt_yzy, tokenizer, getEachPOS, getKeywords
 
 @Content.route('/getArticles', methods=["POST", "GET"])
 def get_articles():
@@ -63,7 +63,8 @@ def get_articles():
         #print("length of entries: ", len(entries))
         for e in entries:
             cur_title = html2txt(e.title)
-            cur_summary = html2txt(e.summary)
+            #cur_summary = html2txt(e.summary)
+            cur_summary = e.summary
             article = Article(cur_title, cur_summary)
             #print(e.title)
             findarticle = Article.query.filter_by(ArticleTitle=cur_title).all()
@@ -84,7 +85,7 @@ def get_articles():
                     db.session.rollback()
                     return jsonify({'state':'failed', 'description':e.args[0]})
                 #把文章关键词找出来
-                text = cur_summary
+                text = html2txt(cur_summary)
                 keywordList = getKeywords(text)
                 #print(keywordList)
                 #关键词入库
@@ -101,7 +102,7 @@ def get_articles():
                         db.session.rollback()
                         return jsonify({'state':'failed', 'description': e.args[0]})
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
+                newsdata = {'title': cur_article.ArticleTitle, 'article': html2txt_yzy(cur_article.ArticleContent),
                             'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
                 es.insert_data(newsdata)
                 article_list.append(newsdata)
