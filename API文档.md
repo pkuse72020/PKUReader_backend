@@ -836,7 +836,31 @@ def example():
           'imgLinks': imgLinks_list, 
           'raw_html':raw_html
       }
-// 类似于getFavorArticle中的定义
+// 类似于getFavo##rticle中的定义
   ```
   
+
+
+
+### /content/getWiki
+
+> 给出关键词，获取对应词条
+
+- 输入
+
+  ```json
+  {
+      'wikiword': '要搜索的词条名'
+  }
+  ```
+
+- 输出
+
+  ```json
+  {
+  	'result': ['词条名', 'Introduction', '具体介绍blabla'],
+      'state': "success"
+  }
+  ```
+
   
