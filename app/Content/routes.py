@@ -2,14 +2,14 @@ from typing import DefaultDict
 from app.Content import Content
 from flask import request, session, jsonify
 import feedparser
-
+import sqlite3
 import re
 
 @Content.route('/')
 def hello_world():
     return "content helloworld!"
 
-from app import db, es
+from app import db, es, WIKI_DIR
 from app.tables import *
 from app.tables4favor import *
 from NLProcess.tools import html2txt, html2txt_yzy, tokenizer, getEachPOS, getKeywords
@@ -225,4 +225,29 @@ def get_all_article():  #仅供测试
         print(item.ArticleId)
         print(item.ArticleTitle)
         print(item.ArticleContent)
+
+@Content.route('/getWiki', methods=["POST", "GET"])
+def serchword():
+    if request.method == "GET":
+        wikiword = request.args.get("wikiword")
+    else:
+        wikiword = request.form.get("wikiword")
+    con_wikidb = sqlite3.connect(WIKI_DIR)
+    cursor = con_wikidb.cursor()#数据库连接
+    try:
+        sql = "select * from review1 where Article_title = "+"'"+wikiword+"'"#查询操作
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception as e:
+        con_wikidb.rollback()
+        return jsonify({"state":"failed", "description":e.args[0]})
+    cursor.close()
+    con_wikidb.close()
+    if(str(result) == "()" ):
+        return jsonify({"state":"failed", "description":"No wiki entry found"})
+    else:
+        s=str(result)
+        return jsonify({"state":"success", "result":s})
+
+
 
