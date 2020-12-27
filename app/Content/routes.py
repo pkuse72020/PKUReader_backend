@@ -102,10 +102,13 @@ def get_articles():
                 keywordList = [x.Keyword for x in keywordList]
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
                 raw_content = cur_article.ArticleContent
+                raw_html = raw_content
+                imgLinks_list = getImgLink(raw_content)
                 raw_content = showenter(raw_content)
                 show_content = html2txt_yzy(raw_content)
                 newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
-                            'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                            'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict,'imgLinks': imgLinks_list, 
+                            'raw_html':raw_html}
                 article_list.append(newsdata)
             else:
                 try:

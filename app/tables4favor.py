@@ -5,6 +5,36 @@ import uuid
 
 import app
 from app.tables import *
+from NLProcess.tools import html2txt, html2txt_yzy
+
+
+import re
+
+
+def showenter(text):
+    ret = text.replace("<br>", '\n')
+    ret = ret.replace("<p></p>", '\n')
+    return ret
+
+def getImgLink(text):
+    DEFAULT_IMG = ['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.FRbluebirds_ZH-CN3972483010_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.WildReindeer_ZH-CN8301029606_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BandedPipefish_ZH-CN8209616080_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.HolidayNubble_ZH-CN8122183595_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.CastleriggStone_ZH-CN8015482045_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp']
+    pattern1 = re.compile(r'<img(.*?)/>')
+    pattern2 = re.compile(r'src="(.*?)"')
+    first_rst = pattern1.findall(text)
+    second_rst = [pattern2.findall(e) for e in first_rst]
+    second_rst = [e for ee in second_rst for e in ee]
+    # second_rst += DEFAULT_IMG
+    if len(second_rst) == 0:
+        second_rst = DEFAULT_IMG
+    return second_rst
+
+
 
 '''
 created by zkc
@@ -155,13 +185,21 @@ def getArticleByID(articleid, other_info = {}):
     if 'userId' in other_info:
         userId = other_info['userId']
 
+    raw_content = cur_article.ArticleContent
+    raw_html = raw_content
+    imgLinks_list = getImgLink(raw_content)
+    raw_content = showenter(raw_content)
+    show_content = html2txt_yzy(raw_content)
+
     return {
         'title': cur_article.ArticleTitle,
-        'content': cur_article.ArticleContent,
+        'content': show_content,
         'keywords': keywordlist,
         '_Id':_Id,
         'userId':userId,
-        'articleId':articleid
+        'articleId':articleid,
+        'imgLinks': imgLinks_list, 
+        'raw_html':raw_html
     }
 
 def userGetFavorArticles(userId):
