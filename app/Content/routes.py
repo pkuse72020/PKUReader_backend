@@ -246,7 +246,7 @@ def serchword():
     if(str(result) == "()" ):
         return jsonify({"state":"failed", "description":"No wiki entry found"})
     else:
-        s=str(result)
+        s=result
         return jsonify({"state":"success", "result":s})
 
 
