@@ -827,14 +827,16 @@ def example():
 
   ```json
   {
-      'title': '文章标题',
-      'content': '文章内容',
-      'keywords':{
-          '0': '关键词1',
-          '1': '关键词2',
-          //...
+          'title': cur_article.ArticleTitle,
+          'content': show_content,
+          'keywords': keywordlist,
+          '_Id':_Id,
+          'userId':userId,
+          'articleId':articleid,
+          'imgLinks': imgLinks_list, 
+          'raw_html':raw_html
       }
-  }
+// 类似于getFavorArticle中的定义
   ```
-
+  
   
