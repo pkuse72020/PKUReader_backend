@@ -32,7 +32,7 @@ def getImgLink(text):
     first_rst = pattern1.findall(text)
     second_rst = [pattern2.findall(e) for e in first_rst]
     second_rst = [e for ee in second_rst for e in ee]
-    second_rst += DEFAULT_IMG
+    # second_rst += DEFAULT_IMG
     if len(second_rst) == 0:
         second_rst = DEFAULT_IMG
     return second_rst
@@ -133,11 +133,13 @@ def get_articles():
                         return jsonify({'state':'failed', 'description': e.args[0]})
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
                 raw_content = cur_article.ArticleContent
+                raw_html = raw_content
                 imgLinks_list = getImgLink(raw_content)
                 raw_content = showenter(raw_content)
                 show_content = html2txt_yzy(raw_content)
                 newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
-                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict, 'imgLinks': imgLinks_list}
+                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict, 'imgLinks': imgLinks_list, 
+                            'raw_html':raw_html}
                 es.insert_data(newsdata)
                 article_list.append(newsdata)
     index = range(len(article_list))

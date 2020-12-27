@@ -735,6 +735,7 @@ def example():
               },
               'imgLinks':['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
       'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp'] // 图片链接列表，包含所有图片，若新闻没有图片则返回默认图片
+              ,'raw_html':'里面是未处理的html'
           },
           '1':{
               'title': '文章名2',
@@ -749,6 +750,7 @@ def example():
           },
               'imgLinks':['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
       'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp'] // 图片链接列表，包含所有图片，若新闻没有图片则返回默认图片
+              ,'raw_html':'里面是未处理的html'
       }
           //后略
   }
