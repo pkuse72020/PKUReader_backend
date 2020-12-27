@@ -1,6 +1,9 @@
+from typing import DefaultDict
 from app.Content import Content
 from flask import request, session, jsonify
 import feedparser
+
+import re
 
 @Content.route('/')
 def hello_world():
@@ -15,6 +18,25 @@ def showenter(text):
     ret = text.replace("<br>", '\n')
     ret = ret.replace("<p></p>", '\n')
     return ret
+
+def getImgLink(text):
+    DEFAULT_IMG = ['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.FRbluebirds_ZH-CN3972483010_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.WildReindeer_ZH-CN8301029606_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BandedPipefish_ZH-CN8209616080_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.HolidayNubble_ZH-CN8122183595_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.CastleriggStone_ZH-CN8015482045_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp']
+    pattern1 = re.compile(r'<img(.*?)/>')
+    pattern2 = re.compile(r'src="(.*?)"')
+    first_rst = pattern1.findall(text)
+    second_rst = [pattern2.findall(e) for e in first_rst]
+    second_rst = [e for ee in second_rst for e in ee]
+    # second_rst += DEFAULT_IMG
+    if len(second_rst) == 0:
+        second_rst = DEFAULT_IMG
+    return second_rst
+
 
 @Content.route('/getArticles', methods=["POST", "GET"])
 def get_articles():
@@ -111,10 +133,13 @@ def get_articles():
                         return jsonify({'state':'failed', 'description': e.args[0]})
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
                 raw_content = cur_article.ArticleContent
+                raw_html = raw_content
+                imgLinks_list = getImgLink(raw_content)
                 raw_content = showenter(raw_content)
                 show_content = html2txt_yzy(raw_content)
                 newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
-                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict, 'imgLinks': imgLinks_list, 
+                            'raw_html':raw_html}
                 es.insert_data(newsdata)
                 article_list.append(newsdata)
     index = range(len(article_list))
