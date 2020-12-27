@@ -185,23 +185,33 @@ def get_article_by_id():
     else:
         articleid = request.form.get("articleid")
 
+
     try:
-        article_rst = Article.query.filter_by(ArticleId=articleid).all()
+        return_dict = getArticleByID(articleid)
     except Exception as e:
         return jsonify({'state':'failed', 'description':'Find Article error'})
-    if len(article_rst) == 0:
-        return jsonify({'state':'failed', 'description': 'Find No Article.'})
-    cur_article = article_rst[0]
 
-    keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
-    keywordlist = [x.Keyword for x in keywordlist]
-    keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
-    return jsonify({
-        'title': cur_article.ArticleTitle,
-        'article ': cur_article.ArticleContent,
-        'keywords': keywordlist,
-        'state': 'success'
-    })
+    if return_dict == None:
+        return jsonify({'state':'failed', 'description': 'Find No Article.'})
+    return jsonify(return_dict)
+
+    # try:
+    #     article_rst = Article.query.filter_by(ArticleId=articleid).all()
+    # except Exception as e:
+    #     return jsonify({'state':'failed', 'description':'Find Article error'})
+    # if len(article_rst) == 0:
+    #     return jsonify({'state':'failed', 'description': 'Find No Article.'})
+    # cur_article = article_rst[0]
+
+    # keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
+    # keywordlist = [x.Keyword for x in keywordlist]
+    # keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
+    # return jsonify({
+    #     'title': cur_article.ArticleTitle,
+    #     'article ': cur_article.ArticleContent,
+    #     'keywords': keywordlist,
+    #     'state': 'success'
+    # })
 
 @Content.route('/getallarticle', methods=["POST", "GET"])
 def get_all_article():  #仅供测试
