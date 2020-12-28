@@ -232,6 +232,11 @@ def serchword():
         wikiword = request.args.get("wikiword")
     else:
         wikiword = request.form.get("wikiword")
+    t = list(wikiword)
+    if(ord(t[0])>96 and ord(t[0])<123):
+        p=ord(t[0])-32
+        t[0]=chr(p)
+        wikiword = ''.join(t)
     con_wikidb = sqlite3.connect(WIKI_DIR)
     cursor = con_wikidb.cursor()#数据库连接
     try:
@@ -241,13 +246,22 @@ def serchword():
     except Exception as e:
         con_wikidb.rollback()
         return jsonify({"state":"failed", "description":e.args[0]})
-    cursor.close()
-    con_wikidb.close()
-    if(str(result) == "()" ):
-        return jsonify({"state":"failed", "description":"No wiki entry found"})
+    
+    if(str(result) == "[]" ):
+        s1=wikiword+(" (消歧义)")
+        sql2 = "select * from review1 where Article_title = "+"'"+s1+"'"#查询操作
+        cursor.execute(sql2)
+        result2 = cursor.fetchall()
+        if(str(result2) == "[]"):
+            return jsonify({"state":"failed", "description":"No wiki entry found"})
+        else:
+            s2 = result2
+            return jsonify({"state":"success", "result":s2})
     else:
         s=result
         return jsonify({"state":"success", "result":s})
+    cursor.close()
+    con_wikidb.close()
 
 
 
