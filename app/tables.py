@@ -10,11 +10,13 @@ class UserInfo(db.Model):
     Username = db.Column(db.String(20), nullable=False, unique=True)
     # Password = db.Column(db.String(20), nullable=True)
     Password_hash = db.Column(db.String(100), nullable=False)
+    Is_admin=db.Column(db.Boolean,nullable=False)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password,is_admin=False):
         self.UserId = str(uuid.uuid1())
         self.Username = username
         self.Password_hash = generate_password_hash(password)
+        self.Is_admin=is_admin
 
     def checkPassword(self, password):
         return check_password_hash(self.Password_hash, password)

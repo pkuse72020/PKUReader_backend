@@ -7,7 +7,7 @@ from app import db, auth
 from app.token_auth import generate_auth_token
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from app import pubkey, privkey
-import rsa
+import rsa,base64
 
 
 
@@ -27,8 +27,13 @@ def signip():
     else:
         username = request.form.get("username")
         password = request.form.get("password")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
+    try:
+        username=base64.b64decode(username)
+        password=base64.b64decode(password)
+        username=rsa.decrypt(username,privkey).decode('utf-8')
+        password = rsa.decrypt(password, privkey).decode('utf-8')
+    except Exception as e:
+        return jsonify({"state": "failed1", "description": e.args[0]})
     info = UserInfo(username, password)
     try:
         db.session.add(info)
@@ -41,7 +46,7 @@ def signip():
 # 登陆
 # 传入参数格式{"username":...,"password":...}
 # 传入参数格式{"username":...,"password":...}
-# 成功时返回参数格式{"state":"success","UserId":...,"token":...}
+# 成功时返回参数格式{"state":"success","UserId":...,"token":...."is_admin":...}
 # 失败时返回参数格式{"state":"failed","description":...}
 @UserManagement.route('/login', methods=["POST", "GET"])
 def login():
@@ -51,8 +56,13 @@ def login():
     else:
         username = request.form.get("username")
         password = request.form.get("password")
-    # username=rsa.decrypt(username,privkey).decode('utf-8')
-    # password=rsa.decrypt(password,privkey).decode('utf-8')
+    try:
+        username=base64.b64decode(username)
+        password=base64.b64decode(password)
+        username=rsa.decrypt(username,privkey).decode('utf-8')
+        password = rsa.decrypt(password, privkey).decode('utf-8')
+    except Exception as e:
+        return jsonify({"state": "failed1", "description": e.args[0]})
     try:
         result = UserInfo.query.filter_by(Username=username).all()
     except Exception as e:
@@ -64,7 +74,7 @@ def login():
     else:
         result = result[0]
         if result.checkPassword(password):
-            return jsonify({"state": "success","UserId":result.UserId,"token":generate_auth_token(result.UserId,result.Password_hash)})
+            return jsonify({"state": "success","UserId":result.UserId,"token":generate_auth_token(result.UserId,result.Password_hash),"is_admin":result.Is_admin})
         else:
             return jsonify({"state": "failed", "description": "Wrong password."})
             
