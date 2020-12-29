@@ -178,9 +178,12 @@ def example():
                    'userId': 'b7451baa-3eda-11eb-a877-00163e0f2f21',
                    'content': '  人民网北京12月15日电 （赵竹青）记者从国家航天局获悉，截至12月14日21时，“天问一号”探测器已在轨飞行144天，飞行里程约3.6亿公里，距离地球超过1亿公里，距离火星约1200万公里，飞行状态良好。   受天体运动规律影响，火星与地球距离在0.5亿公里至4亿多公里周期性发生变化。“天问一号”探测器到达火星附近时，距离地球约1.9亿公里。   “天问一号”自7月23日发射以来，已成功完成地月合照、探测器“自拍”、三次中途修正、一次深空机动、载荷自检等工作。后续，还将进行数次轨道修正，预计明年2月中旬接近火星后，实施“刹车”制动进入环火轨道，为火星着陆作准备。', 
                  'keywords': {'0': '火星', '1': '距离', '2': '探测器', '3': '地球', '4': '深空', '5': '机动', '6': '天问', '7': '附近', '8': '修正', '9': '环火', '10': '赵竹青', '11': '北京', '12': '记者', '13': '人民网', '14': '国家航天局', '15': '轨道', '16': '规律', '17': '载荷', '18': '天体', '19': '周期性'}, 
-                 'title': '“天问一号”距地球超1亿公里 预计明年2月抵达火星'
-                }], // 列表，每一项表示一条数据库记录
-        'state': 'success' // 成功状态
+                 'title': '“天问一号”距地球超1亿公里 预计明年2月抵达火星',
+                  'imgLinks':['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+          'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp'] // 图片链接列表，包含所有图片，若新闻没有图片则返回默认图片
+                ,'raw_html':'里面是未处理的html'
+              }], // 列表，每一项表示一条数据库记录
+      'state': 'success' // 成功状态
     }
     ```
     
@@ -732,7 +735,10 @@ def example():
                   '1': '关键词2',
                   //...中间略
                	'19': '关键词20'
-              }
+              },
+              'imgLinks':['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+      'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp'] // 图片链接列表，包含所有图片，若新闻没有图片则返回默认图片
+              ,'raw_html':'里面是未处理的html'
           },
           '1':{
               'title': '文章名2',
@@ -745,6 +751,9 @@ def example():
                   //...中间略
                	'19': '关键词t'
           },
+              'imgLinks':['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+      'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp'] // 图片链接列表，包含所有图片，若新闻没有图片则返回默认图片
+              ,'raw_html':'里面是未处理的html'
       }
           //后略
   }
@@ -769,9 +778,35 @@ def example():
 - 输出：
 
   ```json
-  
+  {
+      'state': 'success',
+    'result': {
+          '0': {
+              'article': '文章内容',
+              'title': '文章标题',
+              'id': '文章id',
+              'keyword_num': 20,
+              'keyword_list':{
+                  '0': '关键词1',
+                  '1': //...
+                  //...
+                  
+              }
+          },
+          '1':{
+              //...与上面格式相同
+          },
+          //...
+      }
+  }
+      
+  //失败时：
+  {
+      'state': 'failed',
+      'description': '....'
+  }
   ```
-
+  
   
 
 ### /content/getArticleById
@@ -792,13 +827,39 @@ def example():
 
   ```json
   {
-      'title': '文章标题',
-      'content': '文章内容',
-      'keywords':{
-          '0': '关键词1',
-          '1': '关键词2',
-          //...
+          'title': cur_article.ArticleTitle,
+          'content': show_content,
+          'keywords': keywordlist,
+          '_Id':_Id,
+          'userId':userId,
+          'articleId':articleid,
+          'imgLinks': imgLinks_list, 
+          'raw_html':raw_html
       }
+// 类似于getFavo##rticle中的定义
+  ```
+  
+
+
+
+### /content/getWiki
+
+> 给出关键词，获取对应词条
+
+- 输入
+
+  ```json
+  {
+      'wikiword': '要搜索的词条名'
+  }
+  ```
+
+- 输出
+
+  ```json
+  {
+  	'result': ['词条名', 'Introduction', '具体介绍blabla'],
+      'state': "success"
   }
   ```
 

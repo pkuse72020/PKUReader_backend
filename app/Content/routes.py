@@ -1,15 +1,42 @@
+from typing import DefaultDict
 from app.Content import Content
 from flask import request, session, jsonify
 import feedparser
+import sqlite3
+import re
 
 @Content.route('/')
 def hello_world():
     return "content helloworld!"
 
-from app import db, es
+from app import db, es, WIKI_DIR
 from app.tables import *
 from app.tables4favor import *
-from NLProcess.tools import html2txt, tokenizer, getEachPOS, getKeywords
+from NLProcess.tools import html2txt, html2txt_yzy, tokenizer, getEachPOS, getKeywords
+
+def showenter(text):
+    ret = text.replace("<br>", '\n')
+    ret = ret.replace("<p></p>", '\n')
+    return ret
+
+def getImgLink(text):
+    DEFAULT_IMG = ['https://cn.bing.com/th?id=OHR.IbonPlan_ZH-CN8564017247_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BarnettsDemesne_ZH-CN8484261440_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.FRbluebirds_ZH-CN3972483010_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.WildReindeer_ZH-CN8301029606_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.BandedPipefish_ZH-CN8209616080_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.HolidayNubble_ZH-CN8122183595_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp',
+    'https://cn.bing.com/th?id=OHR.CastleriggStone_ZH-CN8015482045_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp']
+    pattern1 = re.compile(r'<img(.*?)/>')
+    pattern2 = re.compile(r'src="(.*?)"')
+    first_rst = pattern1.findall(text)
+    second_rst = [pattern2.findall(e) for e in first_rst]
+    second_rst = [e for ee in second_rst for e in ee]
+    # second_rst += DEFAULT_IMG
+    if len(second_rst) == 0:
+        second_rst = DEFAULT_IMG
+    return second_rst
+
 
 @Content.route('/getArticles', methods=["POST", "GET"])
 def get_articles():
@@ -63,7 +90,8 @@ def get_articles():
         #print("length of entries: ", len(entries))
         for e in entries:
             cur_title = html2txt(e.title)
-            cur_summary = html2txt(e.summary)
+            #cur_summary = html2txt(e.summary)
+            cur_summary = e.summary
             article = Article(cur_title, cur_summary)
             #print(e.title)
             findarticle = Article.query.filter_by(ArticleTitle=cur_title).all()
@@ -73,8 +101,14 @@ def get_articles():
                 keywordList = Article2Keyword.query.filter_by(ArticleId=articleid).all()
                 keywordList = [x.Keyword for x in keywordList]
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
-                            'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                raw_content = cur_article.ArticleContent
+                raw_html = raw_content
+                imgLinks_list = getImgLink(raw_content)
+                raw_content = showenter(raw_content)
+                show_content = html2txt_yzy(raw_content)
+                newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
+                            'id': cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict,'imgLinks': imgLinks_list, 
+                            'raw_html':raw_html}
                 article_list.append(newsdata)
             else:
                 try:
@@ -84,7 +118,7 @@ def get_articles():
                     db.session.rollback()
                     return jsonify({'state':'failed', 'description':e.args[0]})
                 #把文章关键词找出来
-                text = cur_summary
+                text = html2txt(cur_summary)
                 keywordList = getKeywords(text)
                 #print(keywordList)
                 #关键词入库
@@ -101,8 +135,14 @@ def get_articles():
                         db.session.rollback()
                         return jsonify({'state':'failed', 'description': e.args[0]})
                 keyword_dict = dict(zip(range(len(keywordList)), keywordList))
-                newsdata = {'title': cur_article.ArticleTitle, 'article': cur_article.ArticleContent,
-                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict}
+                raw_content = cur_article.ArticleContent
+                raw_html = raw_content
+                imgLinks_list = getImgLink(raw_content)
+                raw_content = showenter(raw_content)
+                show_content = html2txt_yzy(raw_content)
+                newsdata = {'title': cur_article.ArticleTitle, 'article': show_content,
+                            'id':cur_article.ArticleId, 'keyword_num': len(keywordList), 'keyword_list': keyword_dict, 'imgLinks': imgLinks_list, 
+                            'raw_html':raw_html}
                 es.insert_data(newsdata)
                 article_list.append(newsdata)
     index = range(len(article_list))
@@ -121,7 +161,18 @@ def search():
     else:
         searchword = request.form.get("searchword")
 
-    return jsonify({'state': 'success', 'result': es.search_news(searchword)})
+    try:
+        res = es.search_news(searchword)
+        res = json.loads(res)
+        article_list = []
+        for item in res['hits']['hits']:
+            article_list.append(item["_source"])
+        article_dict = dict(zip(range(len(article_list)), article_list))
+    except Exception as e:
+        return jsonify({'state':'failed',
+                        'description': 'Search Error.'})
+    return jsonify({'state': 'success', 'result': article_dict})
+
 
 @Content.route('/getArticleById', methods=["POST", "GET"])
 def get_article_by_id():
@@ -134,23 +185,33 @@ def get_article_by_id():
     else:
         articleid = request.form.get("articleid")
 
+
     try:
-        article_rst = Article.query.filter_by(ArticleId=articleid).all()
+        return_dict = getArticleByID(articleid)
     except Exception as e:
         return jsonify({'state':'failed', 'description':'Find Article error'})
-    if len(article_rst) == 0:
-        return jsonify({'state':'failed', 'description': 'Find No Article.'})
-    cur_article = article_rst[0]
 
-    keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
-    keywordlist = [x.Keyword for x in keywordlist]
-    keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
-    return jsonify({
-        'title': cur_article.ArticleTitle,
-        'content': cur_article.ArticleContent,
-        'keywords': keywordlist,
-        'state': 'success'
-    })
+    if return_dict == None:
+        return jsonify({'state':'failed', 'description': 'Find No Article.'})
+    return jsonify(return_dict)
+
+    # try:
+    #     article_rst = Article.query.filter_by(ArticleId=articleid).all()
+    # except Exception as e:
+    #     return jsonify({'state':'failed', 'description':'Find Article error'})
+    # if len(article_rst) == 0:
+    #     return jsonify({'state':'failed', 'description': 'Find No Article.'})
+    # cur_article = article_rst[0]
+
+    # keywordlist = Article2Keyword.query.filter_by(ArticleId=articleid).all()
+    # keywordlist = [x.Keyword for x in keywordlist]
+    # keywordlist = dict(zip(range(len(keywordlist)), keywordlist))
+    # return jsonify({
+    #     'title': cur_article.ArticleTitle,
+    #     'article ': cur_article.ArticleContent,
+    #     'keywords': keywordlist,
+    #     'state': 'success'
+    # })
 
 @Content.route('/getallarticle', methods=["POST", "GET"])
 def get_all_article():  #仅供测试
@@ -164,4 +225,43 @@ def get_all_article():  #仅供测试
         print(item.ArticleId)
         print(item.ArticleTitle)
         print(item.ArticleContent)
+
+@Content.route('/getWiki', methods=["POST", "GET"])
+def serchword():
+    if request.method == "GET":
+        wikiword = request.args.get("wikiword")
+    else:
+        wikiword = request.form.get("wikiword")
+    t = list(wikiword)
+    if(ord(t[0])>96 and ord(t[0])<123):
+        p=ord(t[0])-32
+        t[0]=chr(p)
+        wikiword = ''.join(t)
+    con_wikidb = sqlite3.connect(WIKI_DIR)
+    cursor = con_wikidb.cursor()#数据库连接
+    try:
+        sql = "select * from review1 where Article_title = "+"'"+wikiword+"'"#查询操作
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception as e:
+        con_wikidb.rollback()
+        return jsonify({"state":"failed", "description":e.args[0]})
+    
+    if(str(result) == "[]" ):
+        s1=wikiword+(" (消歧义)")
+        sql2 = "select * from review1 where Article_title = "+"'"+s1+"'"#查询操作
+        cursor.execute(sql2)
+        result2 = cursor.fetchall()
+        if(str(result2) == "[]"):
+            return jsonify({"state":"failed", "description":"No wiki entry found"})
+        else:
+            s2 = result2
+            return jsonify({"state":"success", "result":s2})
+    else:
+        s=result
+        return jsonify({"state":"success", "result":s})
+    cursor.close()
+    con_wikidb.close()
+
+
 

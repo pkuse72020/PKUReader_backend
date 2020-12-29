@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from app.ArticleSearch import NewsElasticEngine
 import rsa
-
+import sqlite3
+import os
 app = Flask(__name__)
 
 
@@ -23,6 +24,9 @@ auth = HTTPBasicAuth()
 # 实例化orm框架的操作对象，后续数据库操作，都要基于操作对象来完成
 db = SQLAlchemy(app)
 es = NewsElasticEngine()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+WIKI_DIR = os.path.join(BASE_DIR, "../data/wiki.db")
 
 with open('private_key_file.pem', mode='rb') as privfile:
     keydata = privfile.read()

@@ -9,6 +9,8 @@ from lxml import etree
 
 REPLACE_DICT = {'\n':' ','\u3000':' '}
 TRANSTABLE = str.maketrans(REPLACE_DICT)
+REPLACE_DICT_yzy = {'\u3000':' '}
+TRANSTABLE_yzy = str.maketrans(REPLACE_DICT_yzy)
 ALLOWPOS = ('n','nr','nz','PER','f','ns','LOC','nt','s','ORG','nw','eng')
 FUNCS = {'textrank':jieba.analyse.textrank,'tfidf':jieba.analyse.extract_tags}
 
@@ -16,6 +18,12 @@ def html2txt(html):
     response = etree.HTML(text=html)
     out_txt = response.xpath('string(.)')
     out_txt = out_txt.translate(TRANSTABLE)
+    return out_txt
+
+def html2txt_yzy(html):
+    response = etree.HTML(text=html)
+    out_txt = response.xpath('string(.)')
+    out_txt = out_txt.translate(TRANSTABLE_yzy)
     return out_txt
 
 def tokenizer(cleaned_txt):
