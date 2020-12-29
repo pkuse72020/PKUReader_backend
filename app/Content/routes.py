@@ -253,7 +253,8 @@ def serchword():
         cursor.execute(sql2)
         result2 = cursor.fetchall()
         if(str(result2) == "[]"):
-            return jsonify({"state":"failed", "description":"No wiki entry found"})
+            s2 = result2
+            return jsonify({"state":"success", "result":s2})
         else:
             s2 = result2
             return jsonify({"state":"success", "result":s2})
