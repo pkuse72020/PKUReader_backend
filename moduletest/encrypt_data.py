@@ -1,10 +1,8 @@
 
 import rsa,base64
-import json
-
 
 def encrypt_data(data):
-    ret_data={}
+    ret_data = {}
     with open('public_key_file.pem', mode='rb') as privfile:
         keydata = privfile.read()
     pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(keydata)

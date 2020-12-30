@@ -2,7 +2,10 @@ import unittest
 from app import app, db
 import random
 import json
-import base64,rsa
+import base64
+from app.tables import *
+
+from moduletest.encrypt_data import encrypt_data
 
 from eccrypt_data import encrypt_data
 from moduletest.encrypt_data import encrypt_data
@@ -11,19 +14,20 @@ class UserManagementTestCase(unittest.TestCase):
     def setUp(self):
         app.testing = True
         self.client = app.test_client()
-        # db.drop_all()
+        db.drop_all()
         db.create_all()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-        # db.create_all()
+        db.create_all()
 
     def test_signup(self):
         data = {"username": "gyq", "password": "123456"}
-        data=encrypt_data(data)
+        data = encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
+        print(response)
         self.assertDictContainsSubset({"state": "success"}, response)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)

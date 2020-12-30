@@ -2,6 +2,7 @@ import unittest
 from app import app, db
 import json
 import base64
+from moduletest.encrypt_data import encrypt_data
 
 class ContentTestCase(unittest.TestCase):
     def setUp(self):
@@ -16,6 +17,7 @@ class ContentTestCase(unittest.TestCase):
     def test_get_articles(self):
         #添加一个用户
         data = {'username': 'yzy', 'password': 'yzyzyyzy'}
+        data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
@@ -49,6 +51,7 @@ class ContentTestCase(unittest.TestCase):
     def test_get_article_by_id(self):
         # 添加一个用户
         data = {'username': 'lyzy', 'password': 'lyzylzylyzy'}
+        data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
