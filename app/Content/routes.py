@@ -240,6 +240,10 @@ def serchword():
         wikiword = ''.join(t)
     con_wikidb = sqlite3.connect(WIKI_DIR)
     cursor = con_wikidb.cursor()#数据库连接
+    def cht_to_chs(line):
+        line = Converter('zh-hans').convert(line)
+        line.encode('utf-8')
+        return line
     try:
         sql = "select * from review1 where Article_title = "+"'"+wikiword+"'"#查询操作
         cursor.execute(sql)
