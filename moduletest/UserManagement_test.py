@@ -2,8 +2,10 @@ import unittest
 from app import app, db
 import random
 import json
-import base64
+import base64,rsa
 
+from eccrypt_data import encrypt_data
+from moduletest.encrypt_data import encrypt_data
 
 class UserManagementTestCase(unittest.TestCase):
     def setUp(self):
@@ -19,6 +21,7 @@ class UserManagementTestCase(unittest.TestCase):
 
     def test_signup(self):
         data = {"username": "gyq", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
@@ -28,19 +31,23 @@ class UserManagementTestCase(unittest.TestCase):
 
     def test_login(self):
         data = {"username": "gyq", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         data = {"username": "gyq", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/login", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         data = {"username": "gyq123", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/login", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset(
             {"state": "failed", "description": "No such user."}, response)
         data = {"username": "gyq", "password": "123"}
+        data=encrypt_data(data)
         response = self.client.post("/user/login", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset(
@@ -48,10 +55,12 @@ class UserManagementTestCase(unittest.TestCase):
 
     def test_token_test(self):
         data = {"username": "gyq", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
         self.assertDictContainsSubset({"state": "success"}, response)
         data = {"username": "gyq", "password": "123456"}
+        data=encrypt_data(data)
         response = self.client.post("/user/login", data=data)
         response = json.loads(response.data)
         token = response['token']
