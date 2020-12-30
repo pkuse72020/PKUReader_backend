@@ -4,6 +4,7 @@ from flask import request, session, jsonify
 import feedparser
 import sqlite3
 import re
+from langconv import *
 
 @Content.route('/')
 def hello_world():
@@ -248,18 +249,33 @@ def serchword():
         return jsonify({"state":"failed", "description":e.args[0]})
     
     if(str(result) == "[]" ):
-        s1=wikiword+(" (消歧义)")
-        sql2 = "select * from review1 where Article_title = "+"'"+s1+"'"#查询操作
-        cursor.execute(sql2)
-        result2 = cursor.fetchall()
-        if(str(result2) == "[]"):
-            s2 = result2
-            return jsonify({"state":"success", "result":s2})
+        sql3 = "select * from redirectindex where title = "+"'"+wikiword+"'"
+        cursor.execute(sql3)
+        index = cursor.fetchall()
+        lenth = len(index)
+        flag = 0
+        for i in range(lenth):
+            index1 = index[i][0]
+            sql4 = "select * from redirect where rd_from = "+"'"+index1+"'"
+            cursor.execute(sql4)
+            result4 = cursor.fetchall()
+            if(str(result4) == "[]" ):
+                continue
+            else:
+                t2 = cht_to_chs(result4[0][2])
+                sql5 = "select * from review1 where Article_title = "+"'"+t2+"'"
+                cursor.execute(sql5)
+                result5 = cursor.fetchall()
+                flag = 1
+                break
+        if(flag == 1):
+            s3 = result5
+            return jsonify({"state":"success", "result":s3})
         else:
-            s2 = result2
-            return jsonify({"state":"success", "result":s2})
+            s = result
+            return jsonify({"state":"success", "result":s})
     else:
-        s=result
+        s = result
         return jsonify({"state":"success", "result":s})
     cursor.close()
     con_wikidb.close()
