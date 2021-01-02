@@ -30,7 +30,7 @@
 - 从ElasticSearch官网下载安装ElasticSearch
 - 安装ik分词器(https://github.com/medcl/elasticsearch-analysis-ik)
 - 修改ElasticSearch的配置文件，允许外部访问
-- 运行ElasticSearch
+- 运行ElasticSearch(目前我们使用多台服务器搭建生产环境，ElasticSearch部署在远程服务器上，无需在本地部署)
 
 ## Requirements
 
