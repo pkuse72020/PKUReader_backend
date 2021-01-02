@@ -192,6 +192,7 @@ def getArticleByID(articleid, other_info = {}):
     show_content = html2txt_yzy(raw_content)
 
     return {
+        'state': 'success',
         'title': cur_article.ArticleTitle,
         'content': show_content,
         'keywords': keywordlist,
