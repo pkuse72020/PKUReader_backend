@@ -7,9 +7,6 @@ from app.tables import *
 
 from moduletest.encrypt_data import encrypt_data
 
-from eccrypt_data import encrypt_data
-from moduletest.encrypt_data import encrypt_data
-
 class UserManagementTestCase(unittest.TestCase):
     def setUp(self):
         app.testing = True
