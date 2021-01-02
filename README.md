@@ -23,6 +23,8 @@
 ## 部署方式
 - 重建数据库`python run.py`，如遇权限问题可使用`sudo python run.py`，然后按`Ctrl+C`结束运行。数据库文件路径为`app/database.db`
 - 启动gunicorn服务器`sh start_gunicorn.sh`，其参数在config.py中定义，其中在sh文件中需要写明gunicorn的路径
+- 启动rsshub服务器需要在rsshub的代码路径下运行`sh start_rsshub.sh`，其中端口等信息定义在sh文件中
+- `wiki.db`数据库文件过大，我们提供了小型的`data/wikidemo.db`作为样例，其中的表结构与实际使用的`wiki.db`相同，数据量上仅提供前1000行数据
 
 ## Requirements
 
