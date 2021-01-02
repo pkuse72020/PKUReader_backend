@@ -26,6 +26,12 @@
 - 启动rsshub服务器需要在rsshub的代码路径下运行`sh start_rsshub.sh`，其中端口等信息定义在sh文件中
 - `wiki.db`数据库文件过大，我们提供了小型的`data/wikidemo.db`作为样例，其中的表结构与实际使用的`wiki.db`相同，数据量上仅提供前1000行数据
 
+## ElasticSearch安装与配置
+- 从ElasticSearch官网下载安装ElasticSearch
+- 安装ik分词器(https://github.com/medcl/elasticsearch-analysis-ik)
+- 修改ElasticSearch的配置文件，允许外部访问
+- 运行ElasticSearch
+
 ## Requirements
 
 - nodejs for **RSSHUB**
