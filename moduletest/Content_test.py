@@ -15,7 +15,8 @@ class ContentTestCase(unittest.TestCase):
         db.drop_all()
 
     def test_get_articles(self):
-        #添加一个用�?        data = {'username': 'yzy', 'password': 'yzyzyyzy'}
+        #添加一个用户
+        data = {'username': 'yzy', 'password': 'yzyzyyzy'}
         data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)
@@ -48,7 +49,8 @@ class ContentTestCase(unittest.TestCase):
         self.assertDictContainsSubset({"state":"success"}, response)
 
     def test_get_article_by_id(self):
-        # 添加一个用�?        data = {'username': 'lyzy', 'password': 'lyzylzylyzy'}
+        # 添加一个用户
+        data = {'username': 'lyzy', 'password': 'lyzylzylyzy'}
         data=encrypt_data(data)
         response = self.client.post("/user/signup", data=data)
         response = json.loads(response.data)

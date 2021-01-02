@@ -42,5 +42,8 @@ from app import routes
 from app.tables import *
 from app.token_auth import *
 
+db.drop_all()
+db.create_all()
+
 
 
